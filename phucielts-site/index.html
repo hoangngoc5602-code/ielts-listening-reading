@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phúc IELTS · Reading &amp; Listening</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&family=Fredoka:wght@300..700&family=Nunito:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+
+  <!-- Design tokens -->
+  <link rel="stylesheet" href="app/tokens.css" />
+  <style>#root { min-height: 100vh; }</style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React 18 + in-browser Babel (JSX transpiled at runtime, like the original) -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+
+  <!-- ============================================================
+       Bootstrap loader.
+       1) Loads the lesson content: app/data.jsx (LOCAL) first. If that file
+          is not present, it falls back to the original site so the page is
+          never blank.  →  For a 100% independent site, add app/data.jsx
+          locally (see README). Once it's there, the original site is never
+          contacted again.
+       2) Then compiles & runs the app code files (local) in order.
+       ============================================================ -->
+  <script>
+  (function () {
+    var LOCAL_DATA  = "app/data.jsx";
+    var REMOTE_DATA = "https://phucielts.vercel.app/app/data.jsx";
+    var APP = [
+      "app/icons.jsx", "app/store.jsx", "app/shell.jsx", "app/questions.jsx",
+      "app/home.jsx", "app/course.jsx", "app/week.jsx", "app/test.jsx",
+      "app/result.jsx", "app/app.jsx"
+    ];
+
+    function runCode(code, name, isJsx) {
+      var out = isJsx
+        ? Babel.transform(code, { presets: [["react", { runtime: "classic" }]], filename: name }).code
+        : code;
+      (0, eval)(out); // run in global scope (each file assigns window.TID_*)
+    }
+
+    function loadApp(i) {
+      if (i >= APP.length) return;
+      fetch(APP[i]).then(function (r) { return r.text(); }).then(function (code) {
+        runCode(code, APP[i], true);
+        loadApp(i + 1);
+      }).catch(function (e) { console.error("Không tải được " + APP[i], e); });
+    }
+
+    function fail() {
+      document.getElementById("root").innerHTML =
+        "<div style='font-family:sans-serif;max-width:560px;margin:80px auto;padding:24px;line-height:1.6'>"
+        + "<h2>Thiếu file nội dung bài học</h2>"
+        + "<p>Chưa tải được <code>app/data.jsx</code>. Hãy thêm file này vào thư mục <code>app/</code> theo hướng dẫn trong <b>README</b>.</p></div>";
+    }
+
+    // 1) content (local first, remote fallback) → 2) app
+    fetch(LOCAL_DATA).then(function (r) { if (!r.ok) throw 0; return r.text(); })
+      .then(function (code) { runCode(code, LOCAL_DATA, false); loadApp(0); })
+      .catch(function () {
+        fetch(REMOTE_DATA).then(function (r) { return r.text(); })
+          .then(function (code) { runCode(code, REMOTE_DATA, false); loadApp(0); })
+          .catch(fail);
+      });
+  })();
+  </script>
+</body>
+</html>
