@@ -37,8 +37,9 @@ thành Google Doc để giáo viên chữa.
 - **React 18.3.1** (UMD dev) + **ReactDOM 18.3.1** + **Babel Standalone 7.29.0** — tải từ
   `unpkg.com` (CDN). JSX được **biên dịch ngay trên trình duyệt** lúc chạy (classic runtime).
 - **Hash routing** (URL dạng `#/...`). Không cần cấu hình server.
-- Font: Google Fonts (Fredoka, Baloo 2, Nunito, Source Serif 4) — tải từ CDN.
-- ⇒ **Cần internet** để tải React/Babel/Fonts (bình thường với mọi web online).
+- Font: Google Fonts — **Plus Jakarta Sans** (chính, từ 2026-07-10), Fredoka, Nunito, Source Serif 4 — tải từ CDN.
+- **GSAP 3.12.5 + ScrollTrigger** (từ `cdnjs.cloudflare.com`) — lớp chuyển động; do `app/motion.js` điều khiển. Nếu CDN lỗi thì web vẫn chạy, chỉ mất hiệu ứng.
+- ⇒ **Cần internet** để tải React/Babel/GSAP/Fonts (bình thường với mọi web online).
 
 ---
 
@@ -52,7 +53,8 @@ ielts-listening-reading/            ← gốc repo (index.html PHẢI ở đây)
 ├── .gitignore                      ← nên chứa .DS_Store
 ├── app/
 │   ├── data.jsx      ← ⭐ TOÀN BỘ NỘI DUNG BÀI HỌC (window.TID_DATA). Plain JS, ~800KB.
-│   ├── tokens.css    ← màu sắc, font, style hệ thống (CSS variables)
+│   ├── tokens.css    ← màu sắc, font, style hệ thống (CSS variables) — theme "Calm Academy"
+│   ├── motion.js     ← ⭐ lớp chuyển động GSAP (plain JS, KHÔNG JSX) → window.TID_MOTION
 │   ├── icons.jsx     ← icon SVG + mascot (mặt trời, con vật)  → window.TID_ICONS
 │   ├── store.jsx     ← state (localStorage) + hash router + access control → window.TID_STORE
 │   ├── shell.jsx     ← logo, thanh nav, avatar, breadcrumb → window.TID_SHELL
@@ -170,7 +172,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 
 ## 9. Phụ thuộc bên ngoài & điểm cần biết
 
-- **CDN:** React/ReactDOM/Babel (unpkg) + Google Fonts → cần internet khi mở web.
+- **CDN:** React/ReactDOM/Babel (unpkg) + **GSAP 3.12.5 + ScrollTrigger (cdnjs)** + Google Fonts → cần internet khi mở web.
 - **Nộp bài:** phụ thuộc Google Apps Script của chủ (mục 7).
 - **Video buổi học (CHƯA độc lập):** `data.jsx` có **12 chỗ nhúng video YouTube**
   (`materials.recordings[].youtube`). Các video này **vẫn nằm trên kênh YouTube gắn tài khoản
@@ -190,7 +192,9 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - **Thêm/đổi 1 tài liệu:** bỏ file PDF vào `assets/docs/` (tên chữ thường, gạch ngang) →
   cập nhật `url` tương ứng trong `data.jsx`. Tên file phải khớp y hệt (phân biệt hoa/thường).
 - **Thêm/đổi 1 file nghe:** bỏ vào `assets/audio/` → cập nhật `audio.url` trong `data.jsx`.
-- **Đổi màu/font/giao diện:** `app/tokens.css` (biến CSS) hoặc style trong các file `.jsx`.
+- **Đổi màu/font/giao diện:** `app/tokens.css` (biến CSS) hoặc style trong các file `.jsx`. Đổi giá trị **biến CSS** (VD `--reading`, `--ink`, `--tid-orange`) sẽ lan ra toàn site.
+- **Đổi/tắt chuyển động:** sửa `app/motion.js`. Người dùng bật "giảm chuyển động" trong hệ điều hành sẽ tự động thấy bản tĩnh.
+- **Trang làm bài (test.jsx):** theme "Thi Thật" (pro) cố ý giống IELTS máy — hạn chế trang trí/motion ở đây.
 - **Sau mọi thay đổi:** nhắc chủ chạy thử local, rồi Push qua GitHub Desktop để Netlify deploy.
 
 ---
@@ -201,6 +205,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ Mật khẩu đã gỡ, tất cả tuần mở.
 - ✅ 10 file nghe trong `assets/audio/`, 16 PDF trong `assets/docs/` — tất cả khớp link trong `data.jsx`.
 - ✅ Nộp bài chạy qua Apps Script mới (`docScriptUrl` bản mới, `docSecret=hoangngoc`).
+- ✅ **Giao diện đã đổi sang theme "Calm Academy"** (2026-07-10): xanh pine + sage + vàng gold, bóng mềm, font Plus Jakarta Sans, + chuyển động GSAP (`app/motion.js`). Trang làm bài "Thi Thật" giữ nguyên cho sát IELTS máy. Flow không đổi.
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -209,3 +214,17 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 
 - 2026-07-10 — Tạo `CLAUDE.md`; xác nhận repo đầy đủ (index.html ở gốc, 12 file app,
   10 audio, 16 PDF, docScriptUrl mới, docSecret=hoangngoc, không còn link .html/r2.dev).
+- 2026-07-10 — **Đại tu UX/UI sang theme "Calm Academy"** (chủ đã chốt). Chỉ đổi lớp giao
+  diện, KHÔNG đụng logic/flow. Cụ thể:
+  · `tokens.css` viết lại: bảng màu xanh pine/sage/vàng gold, nền oat, **bóng mềm** (thay bóng
+    cứng sticker), bo góc lớn, font **Plus Jakarta Sans**; giữ nguyên tên biến CSS.
+  · `shell.jsx`, `home.jsx`, `course.jsx` viết lại phần trình bày (hero gradient, thẻ mềm nâng
+    khi hover, avatar bo vuông, nav kính mờ). `week.jsx`/`result.jsx`/`questions.jsx` làm mềm
+    viền + bóng, tab kiểu mới.
+  · Thêm `app/motion.js` (GSAP + ScrollTrigger) + nạp GSAP/ScrollTrigger trong `index.html`;
+    reveal khi cuộn, mascot/vòng gold nổi, sóng âm động, stagger hero. Tôn trọng
+    prefers-reduced-motion + có lưới an toàn (lỗi motion vẫn hiện nội dung).
+  · Trang làm bài `test.jsx`: theme "Thi Thật" GIỮ NGUYÊN (sát IELTS máy); chỉ làm mềm theme
+    "Vui tươi".
+  · Đã kiểm tra: toàn bộ file JSX biên dịch sạch; render thử 11 trang/tab/theme bằng jsdom → không lỗi.
+  · Sao lưu bản gốc trước khi sửa (thư mục tạm của phiên làm việc).

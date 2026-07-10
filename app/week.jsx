@@ -378,11 +378,12 @@ function WeekPage({ courseId, weekNum, tab }) {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <TopNavW />
       {/* week banner */}
-      <div style={{ background: `linear-gradient(${accent}, ${accentDeep})`, color: "#fff", borderBottom: "3px solid var(--ink)" }}>
-        <div className="wrap" style={{ padding: "14px 28px 0" }}>
+      <div style={{ background: `linear-gradient(150deg, ${accent}, ${accentDeep})`, color: "#fff", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(rgba(255,255,255,.06) 1.2px, transparent 1.2px)", backgroundSize: "26px 26px", opacity: .6 }}></div>
+        <div className="wrap" style={{ padding: "16px 28px 0", position: "relative" }}>
           <CrumbsLightW items={[{ label: "Trang chủ", to: "/" }, { label: course.name, to: `/c/${courseId}` }, { label: `Week ${week.number}` }]} />
           <div className="row" style={{ gap: 13, margin: "10px 0 14px" }}>
-            <div style={{ width: 48, height: 48, borderRadius: 13, background: "rgba(255,255,255,.92)", color: accentDeep, display: "grid", placeItems: "center", border: "2.5px solid var(--ink)", boxShadow: "3px 4px 0 var(--ink)", lineHeight: 1, flex: "none" }}>
+            <div style={{ width: 48, height: 48, borderRadius: 13, background: "rgba(255,255,255,.92)", color: accentDeep, display: "grid", placeItems: "center", border: "1.5px solid var(--line-strong)", boxShadow: "var(--shadow-card-sm)", lineHeight: 1, flex: "none" }}>
               <div style={{ textAlign: "center" }}><div style={{ fontSize: 8, fontWeight: 800 }}>WEEK</div><div className="mono-num" style={{ fontSize: 20, fontWeight: 700 }}>{String(week.number).padStart(2, "0")}</div></div>
             </div>
             <div>
@@ -397,11 +398,11 @@ function WeekPage({ courseId, weekNum, tab }) {
               return (
                 <button key={t.id} onClick={() => goW(`/c/${courseId}/w/${week.number}/${t.id}`)}
                   className="row" style={{
-                    gap: 8, padding: "9px 18px", border: "2.5px solid var(--ink)",
-                    borderBottom: on ? "2.5px solid #fff" : "2.5px solid var(--ink)",
-                    background: on ? "#fff" : "rgba(0,0,0,.16)", color: on ? "var(--ink)" : "#fff",
+                    gap: 8, padding: "11px 20px", border: "none",
+                    background: on ? "#fff" : "rgba(255,255,255,.14)", color: on ? accentDeep : "#fff",
                     borderTopLeftRadius: 14, borderTopRightRadius: 14, borderBottomLeftRadius: 0, borderBottomRightRadius: 0,
-                    fontWeight: 800, fontSize: 14.5, marginBottom: -3, position: "relative", transition: "background .15s", whiteSpace: "nowrap",
+                    fontWeight: 700, fontSize: 14.5, marginBottom: 0, position: "relative", transition: "background .2s", whiteSpace: "nowrap",
+                    boxShadow: on ? "0 -2px 12px rgba(0,0,0,.08)" : "none",
                   }}>
                   {t.icon({ size: 17 })}
                   <span>{t.label}</span>
@@ -436,7 +437,7 @@ function MaterialsTab({ week, accent, accentDeep, tint, courseId }) {
     <Section icon={<IW.doc size={18} />} title="Tài liệu tuần học" accent={accentDeep} tint={tint}>
       {(!m.pdfs || m.pdfs.length === 0) ? (
         <div className="sticker-sm" style={{ background: "#fff", padding: "16px 18px", boxShadow: "none", border: "2px dashed var(--line-strong)", display: "flex", gap: 12, alignItems: "center", color: "var(--muted)" }}>
-          <div style={{ width: 38, height: 38, borderRadius: 10, background: tint, color: accentDeep, border: "2px solid var(--ink)", display: "grid", placeItems: "center", flex: "none" }}><IW.doc size={18} /></div>
+          <div style={{ width: 38, height: 38, borderRadius: 10, background: tint, color: accentDeep, border: "1px solid var(--line-strong)", display: "grid", placeItems: "center", flex: "none" }}><IW.doc size={18} /></div>
           <div style={{ fontWeight: 700, fontSize: 13.5, lineHeight: 1.5 }}>Slide & tài liệu sẽ được thầy cập nhật.</div>
         </div>
       ) : (
@@ -448,9 +449,9 @@ function MaterialsTab({ week, accent, accentDeep, tint, courseId }) {
             const Icon = isGdoc ? IW.doc : IW.pdf;
             const subtitle = isGdoc ? "Google Docs · Mở bằng trình duyệt" : (p.pages ? `${p.pages} trang · ${p.size}` : null);
             return (
-              <a key={i} href={p.url || "#"} target={p.url ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!p.url) e.preventDefault(); }} className="row sticker-sm" style={{ gap: 14, background: "#fff", padding: "13px 15px", justifyContent: "space-between", boxShadow: "3px 4px 0 var(--ink)" }}>
+              <a key={i} href={p.url || "#"} target={p.url ? "_blank" : undefined} rel="noreferrer" onClick={(e) => { if (!p.url) e.preventDefault(); }} className="row sticker-sm" style={{ gap: 14, background: "#fff", padding: "13px 15px", justifyContent: "space-between", boxShadow: "var(--shadow-card-sm)" }}>
                 <div className="row" style={{ gap: 13 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, color: iconFg, border: "2px solid var(--ink)", display: "grid", placeItems: "center", flex: "none" }}><Icon size={18} /></div>
+                  <div style={{ width: 38, height: 38, borderRadius: 10, background: iconBg, color: iconFg, border: "1px solid var(--line-strong)", display: "grid", placeItems: "center", flex: "none" }}><Icon size={18} /></div>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 14.5 }}>{p.title}</div>
                     {subtitle && <div style={{ color: "var(--muted)", fontWeight: 700, fontSize: 13 }}>{subtitle}</div>}
@@ -539,7 +540,7 @@ function TypeGuide({ syl, accent, accentDeep, tint, skill, fill, natural }) {
   const ob = ORDER_BADGE[syl.order] || ORDER_BADGE.sequential;
   return (
     <div className="sticker anim-pop" style={{ background: "#fff", overflow: "hidden", marginBottom: (fill || natural) ? 0 : 24, ...(fill ? { flex: "1 1 0", minHeight: 0, display: "flex", flexDirection: "column" } : null) }}>
-      <div style={{ background: `linear-gradient(120deg, ${accent}, ${accentDeep})`, color: "#fff", padding: "18px 24px", borderBottom: "2.5px solid var(--ink)", flex: "none" }}>
+      <div style={{ background: `linear-gradient(120deg, ${accent}, ${accentDeep})`, color: "#fff", padding: "18px 24px", borderBottom: "1.5px solid var(--line-strong)", flex: "none" }}>
         <div className="row" style={{ gap: 9, fontWeight: 800, fontSize: 12.5, letterSpacing: ".06em", opacity: .92 }}>
           <IW.flag size={15} /> DẠNG BÀI {skill.toUpperCase()} TUẦN NÀY
         </div>
@@ -565,7 +566,7 @@ function TypeGuide({ syl, accent, accentDeep, tint, skill, fill, natural }) {
         <div style={{ display: "grid", gap: 11, marginBottom: 20 }}>
           {syl.features.map((f, i) => (
             <div key={i} className="row" style={{ gap: 10, alignItems: "flex-start" }}>
-              <span style={{ flex: "none", width: 22, height: 22, borderRadius: 7, background: tint, color: accentDeep, border: "2px solid var(--ink)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 800 }}>{i + 1}</span>
+              <span style={{ flex: "none", width: 22, height: 22, borderRadius: 7, background: tint, color: accentDeep, border: "1px solid var(--line-strong)", display: "grid", placeItems: "center", fontSize: 11, fontWeight: 800 }}>{i + 1}</span>
               <span style={{ fontWeight: 600, fontSize: 14, lineHeight: 1.55, color: "var(--ink)" }}>{f}</span>
             </div>
           ))}
@@ -589,15 +590,15 @@ function RecordingRow({ r, accent, accentDeep, large }) {
   const [play, setPlay] = useStateW(false);
   const thumb = r.youtube ? `https://img.youtube.com/vi/${r.youtube}/hqdefault.jpg` : null;
   return (
-    <div className="sticker-sm" style={{ background: "#fff", overflow: "hidden", boxShadow: "3px 4px 0 var(--ink)" }}>
-      <div style={{ position: "relative", aspectRatio: "16 / 9", minHeight: large ? 340 : undefined, background: `linear-gradient(135deg, ${accent}, ${accentDeep})`, borderBottom: "2.5px solid var(--ink)" }}>
+    <div className="sticker-sm" style={{ background: "#fff", overflow: "hidden", boxShadow: "var(--shadow-card-sm)" }}>
+      <div style={{ position: "relative", aspectRatio: "16 / 9", minHeight: large ? 340 : undefined, background: `linear-gradient(135deg, ${accent}, ${accentDeep})`, borderBottom: "1.5px solid var(--line-strong)" }}>
         {play && r.youtube ? (
           <iframe title={r.title} src={`https://www.youtube.com/embed/${r.youtube}?autoplay=1&rel=0`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none" }} />
         ) : (
           <button onClick={() => r.youtube && setPlay(true)} aria-label="Phát recording" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", padding: 0, background: thumb ? `center/cover no-repeat url(${thumb})` : "transparent", cursor: r.youtube ? "pointer" : "default", display: "grid", placeItems: "center" }}>
             <span style={{ position: "absolute", inset: 0, background: "rgba(24,26,38,.28)" }} />
-            <span style={{ position: "relative", width: 62, height: 62, borderRadius: "50%", background: "#fff", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center", color: accentDeep, boxShadow: "3px 4px 0 rgba(0,0,0,.35)" }}>
+            <span style={{ position: "relative", width: 62, height: 62, borderRadius: "50%", background: "#fff", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center", color: accentDeep, boxShadow: "0 10px 22px rgba(0,0,0,.30)" }}>
               <IW.play size={26} />
             </span>
           </button>
@@ -622,17 +623,17 @@ function QuizCard({ items, weekNum, accent, accentDeep, tint, fill }) {
   const fillStyle = fill ? { flex: "1 1 0", width: "100%" } : null;
   if (running) {
     return (
-      <div className="sticker-sm" style={{ background: "#fff", padding: "18px", textAlign: "left", boxShadow: "3px 4px 0 var(--ink)", ...fillStyle }}>
+      <div className="sticker-sm" style={{ background: "#fff", padding: "18px", textAlign: "left", boxShadow: "var(--shadow-card-sm)", ...fillStyle }}>
         <QuizInline items={items} qid={qid} accent={accent} accentDeep={accentDeep} onClose={() => setRunning(false)} />
       </div>
     );
   }
   return (
-    <div className="sticker-sm" style={{ background: tint, padding: "20px", textAlign: "center", boxShadow: "3px 4px 0 var(--ink)", ...(fill ? { ...fillStyle, display: "flex", flexDirection: "column", justifyContent: "center" } : null) }}>
-      <div style={{ width: 56, height: 56, margin: "0 auto", borderRadius: 16, background: "#fff", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center", color: accentDeep }}><IW.quiz size={26} /></div>
+    <div className="sticker-sm" style={{ background: tint, padding: "20px", textAlign: "center", boxShadow: "var(--shadow-card-sm)", ...(fill ? { ...fillStyle, display: "flex", flexDirection: "column", justifyContent: "center" } : null) }}>
+      <div style={{ width: 56, height: 56, margin: "0 auto", borderRadius: 16, background: "#fff", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center", color: accentDeep }}><IW.quiz size={26} /></div>
       <h4 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 19, margin: "14px 0 4px" }}>Hiểu bài hôm nay?</h4>
       <p style={{ color: "var(--ink-soft)", fontWeight: 700, fontSize: 14, margin: "0 0 16px" }}>{items.length} câu · kiểm tra bạn đã nắm các ý chính buổi học chưa</p>
-      {score != null && <div className="pill" style={{ background: "#fff", color: "var(--ok)", padding: "6px 14px", border: "2px solid var(--ink)", marginBottom: 12 }}><IW.check size={15} /> Lần trước: {score}/{items.length}</div>}
+      {score != null && <div className="pill" style={{ background: "#fff", color: "var(--ok)", padding: "6px 14px", border: "1px solid var(--line-strong)", marginBottom: 12 }}><IW.check size={15} /> Lần trước: {score}/{items.length}</div>}
       <button onClick={() => setRunning(true)} className="btn btn-ink" style={{ width: "100%" }}><IW.sparkle size={17} /> Làm quiz</button>
     </div>
   );
@@ -661,7 +662,7 @@ function QuizInline({ items, qid, onClose, accent, accentDeep }) {
   if (done) {
     return (
       <div style={{ textAlign: "center", padding: "6px 4px" }}>
-        <div style={{ width: 52, height: 52, margin: "0 auto", borderRadius: 14, background: "#e7f7ee", color: "var(--ok)", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center" }}><IW.check size={26} /></div>
+        <div style={{ width: 52, height: 52, margin: "0 auto", borderRadius: 14, background: "#e7f7ee", color: "var(--ok)", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center" }}><IW.check size={26} /></div>
         <h4 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 21, margin: "12px 0 2px" }}>Hoàn thành!</h4>
         <p style={{ fontWeight: 700, color: "var(--muted)", margin: "0 0 2px", fontSize: 14 }}>Bạn đúng</p>
         <div className="mono-num" style={{ fontSize: 40, fontWeight: 700, color: accentDeep }}>{score}/{items.length}</div>
@@ -676,7 +677,7 @@ function QuizInline({ items, qid, onClose, accent, accentDeep }) {
   return (
     <div>
       <div className="row" style={{ justifyContent: "space-between", marginBottom: 14 }}>
-        <span className="pill" style={{ background: "var(--bg)", color: "var(--ink)", padding: "5px 13px", border: "2px solid var(--ink)" }}>Câu {i + 1}/{items.length}</span>
+        <span className="pill" style={{ background: "var(--bg)", color: "var(--ink)", padding: "5px 13px", border: "1px solid var(--line-strong)" }}>Câu {i + 1}/{items.length}</span>
         <button onClick={onClose} aria-label="Thoát" style={{ width: 32, height: 32, borderRadius: "50%", border: "2px solid var(--line-strong)", background: "#fff", display: "grid", placeItems: "center" }}><IW.x size={16} /></button>
       </div>
       {/* progress bar */}
@@ -694,7 +695,7 @@ function QuizInline({ items, qid, onClose, accent, accentDeep }) {
             else { bd = "var(--line-strong)"; }
           }
           return (
-            <button key={idx} onClick={() => choose(idx)} className="row" style={{ gap: 11, padding: "11px 14px", border: `2.5px solid ${bd}`, background: bg, color: "var(--ink)", borderRadius: 11, fontWeight: 700, fontSize: 15, textAlign: "left", boxShadow: picked == null ? "2px 3px 0 var(--ink)" : "none" }}>
+            <button key={idx} onClick={() => choose(idx)} className="row" style={{ gap: 11, padding: "11px 14px", border: `2.5px solid ${bd}`, background: bg, color: "var(--ink)", borderRadius: 11, fontWeight: 700, fontSize: 15, textAlign: "left", boxShadow: picked == null ? "var(--shadow-card-sm)" : "none" }}>
               <span style={{ width: 24, height: 24, flex: "none", borderRadius: 7, border: "2px solid currentColor", display: "grid", placeItems: "center", fontWeight: 800, fontSize: 12 }}>{String.fromCharCode(65 + idx)}</span>
               <span style={{ flex: 1 }}>{o}</span>
               {picked != null && isAns && <IW.check size={17} style={{ color: "var(--ok)" }} />}
@@ -739,8 +740,8 @@ function TestLauncher({ kind, week, courseId, accent, accentDeep, tint }) {
 
   return (
     <div style={{ maxWidth: 720, margin: "0 auto" }}>
-      <div className="sticker" style={{ background: "#fff", overflow: "hidden" }}>
-        <div style={{ background: `linear-gradient(120deg, ${accent}, ${accentDeep})`, color: "#fff", padding: "22px 26px", borderBottom: "2.5px solid var(--ink)" }}>
+      <div className="sticker" data-reveal style={{ background: "#fff", overflow: "hidden" }}>
+        <div style={{ background: `linear-gradient(120deg, ${accent}, ${accentDeep})`, color: "#fff", padding: "22px 26px", borderBottom: "1.5px solid var(--line-strong)" }}>
           <div className="row" style={{ gap: 10, fontWeight: 800, fontSize: 13, letterSpacing: ".06em", opacity: .9 }}>
             {isClass ? <IW.doc size={16} /> : <IW.book size={16} />} {test.skill.toUpperCase()} · TUẦN {week.number}
           </div>
@@ -759,7 +760,7 @@ function TestLauncher({ kind, week, courseId, accent, accentDeep, tint }) {
                 const subtitle = isReadingSkill ? (p.passage && p.passage.title) : `Part ${i + 1}`;
                 return (
                   <div key={i} className="row" style={{ gap: 10, alignItems: "center", background: "var(--bg)", border: "2px solid var(--line-strong)", borderRadius: 14, padding: "12px 15px" }}>
-                    <span style={{ flex: "none", fontWeight: 800, fontSize: 11.5, letterSpacing: ".04em", color: accentDeep, background: tint, border: "2px solid var(--ink)", borderRadius: 8, padding: "3px 9px" }}>{pill}</span>
+                    <span style={{ flex: "none", fontWeight: 800, fontSize: 11.5, letterSpacing: ".04em", color: accentDeep, background: tint, border: "1px solid var(--line-strong)", borderRadius: 8, padding: "3px 9px" }}>{pill}</span>
                     {subtitle && <span style={{ fontWeight: 700, fontSize: 15, color: "var(--ink)" }}>{subtitle}</span>}
                   </div>
                 );
@@ -808,12 +809,12 @@ function ThemeOption({ k, cur, title, desc, accent }) {
   const pro = k === "pro";
   return (
     <button onClick={() => window.TID_STORE.setState({ testTheme: k })} style={{
-      textAlign: "left", padding: 14, borderRadius: 14, background: "#fff",
-      border: `2.5px solid ${on ? accent : "var(--line-strong)"}`,
-      boxShadow: on ? `3px 4px 0 ${accent}` : "none", transition: "all .12s", cursor: "pointer",
+      textAlign: "left", padding: 14, borderRadius: 16, background: "#fff",
+      border: `2px solid ${on ? accent : "var(--line)"}`,
+      boxShadow: on ? "var(--shadow-card)" : "var(--shadow-card-sm)", transition: "all .2s var(--ease-out)", cursor: "pointer",
     }}>
       {/* mini preview */}
-      <div style={{ height: 64, borderRadius: pro ? 7 : 11, background: pro ? "#f4f6f8" : "var(--bg)", border: pro ? "1px solid var(--line)" : "2px solid var(--ink)", padding: 9, marginBottom: 11, overflow: "hidden", boxShadow: pro ? "none" : "2px 2px 0 var(--ink)" }}>
+      <div style={{ height: 64, borderRadius: pro ? 7 : 11, background: pro ? "#f4f6f8" : "var(--bg)", border: pro ? "1px solid var(--line)" : "1px solid var(--line-strong)", padding: 9, marginBottom: 11, overflow: "hidden", boxShadow: pro ? "none" : "var(--shadow-card-sm)" }}>
         <div style={{ height: 7, width: "70%", borderRadius: 4, background: "var(--line-strong)", marginBottom: 6 }}></div>
         <div style={{ height: 7, width: "90%", borderRadius: 4, background: "var(--line-strong)", marginBottom: 9 }}></div>
         <div className="row" style={{ gap: 5 }}>
@@ -836,7 +837,7 @@ function Section({ icon, title, accent, tint, children, grow }) {
   return (
     <div style={grow ? { display: "flex", flexDirection: "column", flex: "1 1 0", minHeight: 0 } : null}>
       <div className="row" style={{ gap: 10, marginBottom: 14, flex: "none" }}>
-        <div style={{ width: 34, height: 34, borderRadius: 10, background: tint, color: accent, border: "2px solid var(--ink)", display: "grid", placeItems: "center" }}>{icon}</div>
+        <div style={{ width: 34, height: 34, borderRadius: 10, background: tint, color: accent, border: "1px solid var(--line-strong)", display: "grid", placeItems: "center" }}>{icon}</div>
         <h3 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 20, margin: 0 }}>{title}</h3>
       </div>
       {grow ? <div style={{ flex: "1 1 0", minHeight: 0, display: "flex" }}>{children}</div> : children}

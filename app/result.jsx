@@ -176,7 +176,7 @@ function SummaryView({ graded, courseName, elapsed, data, onViewDetail }) {
             LÀM LẠI BÀI
           </button>
           <button className="btn btn-ink" onClick={onViewDetail}
-            style={{ flex: 1, padding: "16px 20px", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, letterSpacing: ".02em", boxShadow: "3px 4px 0 rgba(24,26,38,.5)" }}>
+            style={{ flex: 1, padding: "16px 20px", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 16, letterSpacing: ".02em", boxShadow: "0 12px 24px rgba(24,26,38,.28)" }}>
             XEM BÀI GIẢI CHI TIẾT
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 6l6 6-6 6" />
@@ -288,7 +288,7 @@ function ReviewPassage({ passage, marks, activeN, regHl }) {
 function ExplainCard({ item, hasEvi, onEvidence, active }) {
   const tone = active ? "var(--reading)" : item.correct ? "var(--ok)" : item.blank ? "var(--muted-2)" : "var(--danger)";
   return (
-    <div className="sticker-sm" style={{ background: "#fff", border: "2.5px solid var(--ink)", boxShadow: "3px 4px 0 var(--ink)", padding: "13px 15px", borderLeft: `7px solid ${tone}` }}>
+    <div className="sticker-sm" style={{ background: "#fff", border: "1.5px solid var(--line-strong)", boxShadow: "var(--shadow-card-sm)", padding: "13px 15px", borderLeft: `7px solid ${tone}` }}>
       <div className="row" style={{ gap: 10, justifyContent: "space-between", flexWrap: "wrap", marginBottom: 2 }}>
         <div className="row" style={{ gap: 9 }}>
           <span style={{ width: 27, height: 27, borderRadius: 8, background: item.correct ? "#e7f7ee" : item.blank ? "#f1f0ea" : "#fdeceb", border: `2.5px solid ${item.correct ? "var(--ok)" : item.blank ? "var(--muted-2)" : "var(--danger)"}`, color: item.correct ? "var(--ok)" : item.blank ? "var(--muted-2)" : "var(--danger)", display: "grid", placeItems: "center", fontFamily: "var(--font-display)", fontWeight: 800, fontSize: 13 }}>{item.n}</span>
@@ -454,7 +454,7 @@ function ResultPage({ payload }) {
     return (
       <div style={{ minHeight: "100vh", background: "var(--bg)", display: "grid", placeItems: "center", padding: 24 }}>
         <div className="sticker" style={{ background: "#fff", padding: 28, maxWidth: 440, textAlign: "center" }}>
-          <div style={{ width: 56, height: 56, borderRadius: 14, margin: "0 auto 14px", background: "#fdeceb", color: "var(--danger)", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center" }}><IR.flag size={26} /></div>
+          <div style={{ width: 56, height: 56, borderRadius: 14, margin: "0 auto 14px", background: "#fdeceb", color: "var(--danger)", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center" }}><IR.flag size={26} /></div>
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 22, margin: "0 0 6px" }}>Không mở được kết quả</h2>
           <p style={{ color: "var(--muted)", fontWeight: 600, fontSize: 14.5, margin: "0 0 18px", lineHeight: 1.55 }}>Đường link có thể bị thiếu hoặc hỏng. Hãy xin lại link kết quả từ học sinh.</p>
           <button onClick={() => goR("/")} className="btn btn-ink">Về trang chủ</button>

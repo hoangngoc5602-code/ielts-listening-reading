@@ -138,7 +138,7 @@ function useHighlighter() {
       )}
       {current && (
         <div data-hl-ui style={{ position: "fixed", left: Math.min(pop.x, window.innerWidth - 280), top: pop.y + 14, zIndex: 200 }}>
-          <div className="anim-pop" style={{ width: 260, background: "#fff", border: "2.5px solid var(--ink)", borderRadius: 14, boxShadow: "0 10px 30px rgba(0,0,0,.22)", padding: 14 }}>
+          <div className="anim-pop" style={{ width: 260, background: "#fff", border: "1.5px solid var(--line-strong)", borderRadius: 14, boxShadow: "0 10px 30px rgba(0,0,0,.22)", padding: 14 }}>
             {current.kind === "note" ? (
               <div>
                 <div style={{ fontWeight: 800, fontSize: 12, color: "var(--muted)", letterSpacing: ".05em", marginBottom: 8 }}>GHI CHÚ</div>
@@ -320,7 +320,7 @@ function FontSizeCtl({ fontScale, setFontScale, pro }) {
   const inc = () => setFontScale((v) => Math.min(1.5, Math.round((v + 0.1) * 100) / 100));
   const base = pro
     ? { width: 30, height: 30, borderRadius: 7, border: "1.5px solid #c7cdd8", background: "#fff", color: "#374151" }
-    : { width: 30, height: 30, borderRadius: 8, border: "2px solid var(--line-strong)", background: "#fff", color: "var(--ink)", boxShadow: "1px 2px 0 var(--ink)" };
+    : { width: 30, height: 30, borderRadius: 8, border: "2px solid var(--line-strong)", background: "#fff", color: "var(--ink)", boxShadow: "var(--shadow-card-sm)" };
   return (
     <div className="row" data-hl-ui style={{ gap: pro ? 4 : 5, flex: "none" }} title="Cỡ chữ">
       <button onClick={dec} aria-label="Giảm cỡ chữ" style={{ ...base, display: "grid", placeItems: "center", fontWeight: 800, fontSize: 12, fontFamily: th2Font(pro) }}>A−</button>
@@ -374,11 +374,11 @@ function TestHeader({ test, title, answeredCount, total, onSubmit, accent, th, t
     <header style={{ borderBottom: "2px solid var(--line)", background: "#fff", flex: "none" }}>
       <div style={{ height: 60, padding: "0 22px", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 16 }}>
         <div className="row" style={{ gap: 8, justifySelf: "start" }}>
-          <button onClick={() => history.back()} style={{ width: 34, height: 34, borderRadius: 9, border: "2.5px solid var(--ink)", background: "#fff", display: "grid", placeItems: "center", flex: "none", boxShadow: "2px 2px 0 var(--ink)" }} aria-label="Quay lại"><IT.chevL size={18} /></button>
+          <button onClick={() => history.back()} style={{ width: 34, height: 34, borderRadius: 9, border: "1.5px solid var(--line-strong)", background: "#fff", display: "grid", placeItems: "center", flex: "none", boxShadow: "var(--shadow-card-sm)" }} aria-label="Quay lại"><IT.chevL size={18} /></button>
           <FontSizeCtl fontScale={fontScale} setFontScale={setFontScale} />
         </div>
         {/* center: stopwatch */}
-        <div className="row" style={{ justifySelf: "center", gap: 10, padding: "5px 16px", borderRadius: 999, background: th.tint, border: `2.5px solid var(--ink)`, boxShadow: "3px 3px 0 var(--ink)" }}>
+        <div className="row" style={{ justifySelf: "center", gap: 10, padding: "5px 16px", borderRadius: 999, background: th.tint, border: `1.5px solid var(--line-strong)`, boxShadow: "var(--shadow-card-sm)" }}>
           <span style={{ width: 28, height: 28, borderRadius: "50%", background: accent, color: "#fff", display: "grid", placeItems: "center", flex: "none" }}><IT.clock size={15} /></span>
           <span className="mono-num" style={{ fontWeight: 700, fontSize: 22, lineHeight: 1, color: "var(--ink)", letterSpacing: ".02em" }}>{fmt(elapsed)}</span>
           <span style={{ fontWeight: 800, fontSize: 10, color: "var(--muted)", whiteSpace: "nowrap", textTransform: "uppercase", letterSpacing: ".05em", lineHeight: 1.2 }}>time<br/>elapsed</span>
@@ -593,7 +593,7 @@ function TestFooter({ part, qnums, partAnswers, onChip, onSubmit, accent, th, pa
         border: `2.5px solid ${on ? "var(--ink)" : th.lineStrong}`,
         background: on ? accent : "#fff", color: on ? "#fff" : "var(--ink)",
         fontWeight: 800, fontSize: 13.5, fontFamily: th.font,
-        boxShadow: on ? "2px 3px 0 var(--ink)" : "none",
+        boxShadow: on ? "var(--shadow-card-sm)" : "none",
       }}>
         {p.part}
         {done && <span style={{ width: 6, height: 6, borderRadius: "50%", background: on ? "#fff" : "var(--ok)" }} />}
@@ -750,7 +750,7 @@ function SubmitModal({ test, parts, perPart, answers, courseId, weekNum, kind, n
     return (
       <Modal onClose={onClose}>
         <div style={{ textAlign: "center" }}>
-          <div style={{ width: 60, height: 60, borderRadius: 16, margin: "0 auto", background: "var(--test-blue-tint)", color: "var(--test-blue)", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center" }}><IT.flag size={26} /></div>
+          <div style={{ width: 60, height: 60, borderRadius: 16, margin: "0 auto", background: "var(--test-blue-tint)", color: "var(--test-blue)", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center" }}><IT.flag size={26} /></div>
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 26, margin: "16px 0 4px" }}>Submit?</h2>
           <p style={{ color: "var(--muted)", fontWeight: 700, fontSize: 15, margin: "0 0 18px", lineHeight: 1.5 }}>
             You've answered <b style={{ color: "var(--ink)" }}>{answered}/{totalQ}</b> questions · time <b style={{ color: "var(--ink)" }}>{Math.floor(elapsed / 60)}m{String(elapsed % 60).padStart(2, "0")}s</b>.<br/>
@@ -775,7 +775,7 @@ function SubmitModal({ test, parts, perPart, answers, courseId, weekNum, kind, n
   return (
     <Modal onClose={onClose} wide>
       <div className="row" style={{ gap: 12, marginBottom: 16 }}>
-        <div style={{ width: 50, height: 50, borderRadius: 14, background: "#e7f7ee", color: "var(--ok)", border: "2.5px solid var(--ink)", display: "grid", placeItems: "center", flex: "none" }}><IT.check size={24} /></div>
+        <div style={{ width: 50, height: 50, borderRadius: 14, background: "#e7f7ee", color: "var(--ok)", border: "1.5px solid var(--line-strong)", display: "grid", placeItems: "center", flex: "none" }}><IT.check size={24} /></div>
         <div>
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: 24, margin: 0 }}>Đã nộp bài!</h2>
           <p style={{ color: "var(--muted)", fontWeight: 700, fontSize: 14, margin: "2px 0 0" }}>

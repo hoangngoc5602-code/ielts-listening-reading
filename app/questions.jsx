@@ -36,12 +36,12 @@ function tTheme(pro, accent, accentDeep, tint) {
   return {
     pro: false,
     accent, accentDeep, tint,
-    line: "var(--line)", lineStrong: "var(--line-strong)", shadow: "2px 3px 0 var(--ink)",
-    r: 12, rSm: 10, pill: 999,
-    font: "var(--font-body)", titleFont: "var(--font-display)", titleW: 600, titleSize: 21,
+    line: "var(--line)", lineStrong: "var(--line-strong)", shadow: "var(--shadow-card-sm)",
+    r: 16, rSm: 12, pill: 999,
+    font: "var(--font-body)", titleFont: "var(--font-display)", titleW: 700, titleSize: 21,
     read: "var(--font-body)", readAlign: "justify", readSize: 16.5, readLh: 1.75,
     qSize: 16, qLh: 1.65,
-    btnShadow: "2px 3px 0 var(--ink)", cardBg: "#fff",
+    btnShadow: "var(--shadow-card-sm)", cardBg: "#fff",
   };
 }
 
@@ -337,7 +337,7 @@ function Completion({ group, answers, setA, regRef, th }) {
         <div style={{ display: "grid", gap: 0 }}>
           {group.steps.map((step, i) => (
             <React.Fragment key={i}>
-              <div className="row" style={{ gap: 12, alignItems: "flex-start", background: th.cardBg, border: `${th.pro ? "1.5px" : "2.5px"} solid ${th.pro ? th.lineStrong : "var(--ink)"}`, borderRadius: th.r, padding: "13px 16px", boxShadow: th.pro ? "none" : "2px 3px 0 var(--ink)" }}>
+              <div className="row" style={{ gap: 12, alignItems: "flex-start", background: th.cardBg, border: `${th.pro ? "1.5px" : "2.5px"} solid ${th.pro ? th.lineStrong : "var(--ink)"}`, borderRadius: th.r, padding: "13px 16px", boxShadow: th.pro ? "none" : "var(--shadow-card-sm)" }}>
                 {step.label && <span style={{ flex: "none", fontFamily: th.titleFont, fontWeight: 700, fontSize: 14, color: th.accentDeep, minWidth: 64 }}>{step.label}</span>}
                 <span style={{ lineHeight: 1.8, fontWeight: 400, fontFamily: th.font, fontSize: th.qSize }}>
                   <Segments segs={step.segs} answers={answers} setA={setA} th={th} bank={bank} regRef={regRef} />
