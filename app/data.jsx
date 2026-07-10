@@ -12068,6 +12068,6 @@ window.TID_DATA = {
     }
   },
   "gdocTemplateUrl": "https://docs.google.com/document/d/1OtQ7Eko-Pm_DaiXcjiNlvjuPxX-fHZjpuyJ8YE-3TRA/copy",
-  "docScriptUrl": "https://script.google.com/macros/s/AKfycbyHINoV6rIKJ9EdsuzkLvOoWAZ5PXXk8AfLuhPSlLDShBDALyHvJBjOX3yG0Rju_IP6Pg/exec",
+  "docScriptUrl": "https://script.google.com/macros/s/AKfycbyvVheH4SlANE4_oY4pDzrSr70H2j9MeHPRr9ZJWcwR158ZrGe_k6ksejD5PsWSjh0Eyg/exec",
   "docSecret": "hoangngoc"
 };
