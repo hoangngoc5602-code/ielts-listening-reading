@@ -20,7 +20,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 1",
-                "url": "assets/docs/reading-week-1.html",
+                "url": "assets/docs/reading-week-1.pdf",
                 "type": "gdoc"
               }
             ],
@@ -8151,7 +8151,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 1",
-                "url": "assets/docs/listening-week-1.html",
+                "url": "assets/docs/listening-week-1.pdf",
                 "type": "gdoc"
               }
             ],
@@ -8490,7 +8490,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 2",
-                "url": "assets/docs/listening-week-2.html",
+                "url": "assets/docs/listening-week-2.pdf",
                 "type": "gdoc"
               }
             ],
@@ -8829,7 +8829,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 3",
-                "url": "assets/docs/listening-week-3.html",
+                "url": "assets/docs/listening-week-3.pdf",
                 "type": "gdoc"
               }
             ],
@@ -9352,7 +9352,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 4",
-                "url": "assets/docs/listening-week-4.html",
+                "url": "assets/docs/listening-week-4.pdf",
                 "type": "gdoc"
               }
             ],
@@ -9897,7 +9897,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 5",
-                "url": "assets/docs/listening-week-5.html",
+                "url": "assets/docs/listening-week-5.pdf",
                 "type": "gdoc"
               }
             ],
@@ -10364,7 +10364,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 6",
-                "url": "assets/docs/listening-week-6.html",
+                "url": "assets/docs/listening-week-6.pdf",
                 "type": "gdoc"
               }
             ],
@@ -10930,7 +10930,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 7",
-                "url": "assets/docs/listening-week-7.html",
+                "url": "assets/docs/listening-week-7.pdf",
                 "type": "gdoc"
               }
             ],
@@ -11365,7 +11365,7 @@ window.TID_DATA = {
             "pdfs": [
               {
                 "title": "Tài liệu · Week 8",
-                "url": "assets/docs/listening-week-8.html",
+                "url": "assets/docs/listening-week-8.pdf",
                 "type": "gdoc"
               }
             ],
