@@ -7,15 +7,23 @@ const { CoursePage: CoursePageA } = window.TID_COURSE;
 const { WeekPage: WeekPageA } = window.TID_WEEK;
 const { TestPage: TestPageA } = window.TID_TEST;
 const { ResultPage: ResultPageA } = window.TID_RESULT;
+const { AuthGate: AuthGateA } = window.TID_AUTH;
 
 function App() {
   const { parts } = useRouteA();
   const s = useStoreA(); // re-render on state change
 
   // Shared homework result link (#/r/<payload>) — must work for a teacher who
-  // has never onboarded, so it bypasses the name gate and is fully self-contained.
+  // has never onboarded, so it bypasses BOTH the sign-in gate and the name gate
+  // and is fully self-contained.
   if (parts[0] === "r" && parts[1]) return <ResultPageA payload={parts[1]} />;
 
+  // Everything else lives behind the Google sign-in + allowlist gate.
+  // (AuthGate is a no-op / passthrough when no clientId is configured.)
+  return <AuthGateA><Routed parts={parts} s={s} /></AuthGateA>;
+}
+
+function Routed({ parts, s }) {
   // First visit via ANY link (including deep links to a course/week/test) must
   // ask for the student's name before anything else — otherwise the name stays
   // empty and shows the "Học viên" default everywhere (incl. submitted docs).

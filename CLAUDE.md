@@ -57,6 +57,7 @@ ielts-listening-reading/            ← gốc repo (index.html PHẢI ở đây)
 │   ├── motion.js     ← ⭐ lớp chuyển động GSAP (plain JS, KHÔNG JSX) → window.TID_MOTION
 │   ├── icons.jsx     ← icon SVG + mascot (mặt trời, con vật)  → window.TID_ICONS
 │   ├── store.jsx     ← state (localStorage) + hash router + access control → window.TID_STORE
+│   ├── auth.jsx      ← ⭐ cổng đăng nhập Google (GIS) + allowlist → window.TID_AUTH
 │   ├── shell.jsx     ← logo, thanh nav, avatar, breadcrumb → window.TID_SHELL
 │   ├── questions.jsx ← renderer TẤT CẢ dạng câu hỏi IELTS + chấm điểm → window.TID_QUESTIONS
 │   ├── home.jsx      ← trang chủ + màn hình nhập tên/email (onboarding) → window.TID_HOME
@@ -210,7 +211,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ **Giao diện đã đổi sang theme "Calm Academy"** (2026-07-10): xanh pine + sage + vàng gold, bóng mềm, font Plus Jakarta Sans, + chuyển động GSAP (`app/motion.js`). Trang làm bài "Thi Thật" giữ nguyên cho sát IELTS máy. Flow không đổi.
 - ✅ **Đã DE-BRAND toàn bộ "Phúc"** (2026-07-10, chủ đã chốt): web + tên khóa (`IELTS Reading`/`IELTS Listening`) + logo (bỏ chữ P → biểu tượng sách, chữ "IELTS · Reading & Listening") + **cả 16 PDF** (xoá "PHÚC" và ô header "Week N - …", giữ nguyên nội dung). Không còn chữ "Phúc" trong code/PDF. Đã gỡ luôn fallback về `phucielts.vercel.app`.
 - ✅ **Màn chờ loading** (hamster chạy bánh xe) hiện ngay trong `index.html`, tự ẩn khi app tải xong.
-- ⏳ **Google Auth + allowlist (đang làm):** chủ đang tạo OAuth Client ID + Apps Script allowlist. Chưa ráp phần web. (Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện.)
+- ✅ **Google Auth + allowlist (đã ráp, chờ test thật):** `app/auth.jsx` (`window.TID_AUTH`) — đăng nhập Google (GIS) rồi kiểm tra email qua Apps Script allowlist; bọc `AuthGate` trong `app.jsx` (link `#/r/...` KHÔNG đi qua cổng). Client ID + `allowlistUrl` nằm trong `AUTH_CONFIG` đầu `auth.jsx`. **Tắt cổng:** để `clientId` rỗng. Email Google xác thực được dùng luôn cho nộp bài. Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện. Cần test đăng nhập thật trên web (GIS cần origin đã khai trong OAuth).
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -242,5 +243,10 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   · **16 PDF trong `assets/docs/`**: xoá chữ "PHÚC" (giữ phần "IELTS READING/LISTENING" gốc) và **che ô header
     "Week N - …"** bằng PyMuPDF (redact text tách biệt + che trắng dải header — KHÔNG xoá nhầm nội dung).
     Đã kiểm tra tỷ lệ text 0.97–1.0, số trang không đổi, render ảnh đối chiếu. Bản gốc PDF đã sao lưu.
-  · Google Auth + allowlist: đã giao hướng dẫn thiết lập (OAuth Client ID + Apps Script đọc Google Sheet);
-    chủ đang làm phần Google, sẽ ráp front-end sau (gate tắt mặc định, không phá flow).
+  · Google Auth + allowlist: đã giao hướng dẫn thiết lập (OAuth Client ID + Apps Script đọc Google Sheet).
+- 2026-07-10 — **Ráp Google Auth (GIS) + allowlist** (chủ đã gửi Client ID + URL). Thêm `app/auth.jsx`
+  (`window.TID_AUTH`): đăng nhập Google → decode email → gọi Apps Script allowlist → nếu được phép thì
+  vào app và điền sẵn email/tên cho bước nộp bài; nếu không thì màn "chưa có quyền". Nạp GIS + `auth.jsx`
+  trong `index.html`; `app.jsx` bọc `AuthGate` (chừa link kết quả `#/r/...`). Cổng TẮT nếu `clientId` rỗng.
+  Đã kiểm tra: biên dịch sạch; smoke test AuthGate (cho qua khi allowed / chặn khi chưa đăng nhập) + 11 trang → OK.
+  CHỜ chủ test đăng nhập thật trên site (GIS cần origin khai trong OAuth). Nếu allowlist bị chặn CORS → chuyển sang JSONP.
