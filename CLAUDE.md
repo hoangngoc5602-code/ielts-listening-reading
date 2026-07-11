@@ -211,7 +211,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ **Giao diện đã đổi sang theme "Calm Academy"** (2026-07-10): xanh pine + sage + vàng gold, bóng mềm, font Plus Jakarta Sans, + chuyển động GSAP (`app/motion.js`). Trang làm bài "Thi Thật" giữ nguyên cho sát IELTS máy. Flow không đổi.
 - ✅ **Đã DE-BRAND toàn bộ "Phúc"** (2026-07-10, chủ đã chốt): web + tên khóa (`IELTS Reading`/`IELTS Listening`) + logo (bỏ chữ P → biểu tượng sách, chữ "IELTS · Reading & Listening") + **cả 16 PDF** (xoá "PHÚC" và ô header "Week N - …", giữ nguyên nội dung). Không còn chữ "Phúc" trong code/PDF. Đã gỡ luôn fallback về `phucielts.vercel.app`.
 - ✅ **Màn chờ loading** (hamster chạy bánh xe) hiện ngay trong `index.html`, tự ẩn khi app tải xong.
-- ✅ **Google Auth + allowlist (đã ráp, chờ test thật):** `app/auth.jsx` (`window.TID_AUTH`) — đăng nhập Google (GIS) rồi kiểm tra email qua Apps Script allowlist; bọc `AuthGate` trong `app.jsx` (link `#/r/...` KHÔNG đi qua cổng). Client ID + `allowlistUrl` nằm trong `AUTH_CONFIG` đầu `auth.jsx`. **Tắt cổng:** để `clientId` rỗng. Email Google xác thực được dùng luôn cho nộp bài. Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện. Cần test đăng nhập thật trên web (GIS cần origin đã khai trong OAuth).
+- ✅ **Google Auth + allowlist (đã test thật, chạy ổn định — chủ xác nhận 2026-07-10):** `app/auth.jsx` (`window.TID_AUTH`) — đăng nhập Google (GIS) rồi kiểm tra email qua Apps Script allowlist; bọc `AuthGate` trong `app.jsx` (link `#/r/...` KHÔNG đi qua cổng). Client ID + `allowlistUrl` nằm trong `AUTH_CONFIG` đầu `auth.jsx`. **Tắt cổng:** để `clientId` rỗng. Email Google xác thực được dùng luôn cho nộp bài. Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện. Thêm/bớt học viên = sửa Google Sheet allowlist (không cần deploy lại).
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -249,4 +249,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   vào app và điền sẵn email/tên cho bước nộp bài; nếu không thì màn "chưa có quyền". Nạp GIS + `auth.jsx`
   trong `index.html`; `app.jsx` bọc `AuthGate` (chừa link kết quả `#/r/...`). Cổng TẮT nếu `clientId` rỗng.
   Đã kiểm tra: biên dịch sạch; smoke test AuthGate (cho qua khi allowed / chặn khi chưa đăng nhập) + 11 trang → OK.
-  CHỜ chủ test đăng nhập thật trên site (GIS cần origin khai trong OAuth). Nếu allowlist bị chặn CORS → chuyển sang JSONP.
+- 2026-07-10 — **Chủ đã test đăng nhập Google thật trên site → chạy ổn định. CHỐT toàn bộ đợt nâng cấp này.**
+  Tổng kết đợt: theme "Calm Academy" + motion GSAP · màn chờ hamster · de-brand toàn bộ (web + 16 PDF) ·
+  Google Auth + allowlist (đã bật, `clientId` có trong `auth.jsx`). Flow gốc (mở tuần, làm bài, nộp qua
+  Apps Script, chấm điểm, link chia sẻ kết quả) giữ nguyên, không đổi.
