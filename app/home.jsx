@@ -183,10 +183,16 @@ function CourseCard({ id, color, deep, icon, unlocked, data }) {
 /* ---- name onboarding modal ---- */
 function Onboard() {
   const s = useStoreH();
+  const authH = window.TID_AUTH;
+  // Khi cổng đăng nhập đang BẬT và HV đã đăng nhập → email bị KHÓA theo email
+  // Google đã đăng nhập (chỉ đọc, không cho gõ email khác). Tránh lệch email
+  // nhận file chữa bài so với email đã được duyệt trong allowlist.
+  const lockEmail = !!(authH && authH.authEnabled && authH.authEnabled() && s.authEmail);
   const isReturning = s.onboarded && s.name;
   const [val, setVal] = useStateH(s.name || "");
-  const [emailVal, setEmailVal] = useStateH(s.email || "");
-  const canSubmit = val.trim() && emailVal.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal.trim());
+  const [emailVal, setEmailVal] = useStateH((lockEmail ? s.authEmail : s.email) || "");
+  const effEmail = lockEmail ? (s.authEmail || "") : emailVal.trim();
+  const canSubmit = val.trim() && effEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(effEmail);
   return (
     <Overlay>
       <div className="sticker anim-pop" style={{ background: "#fff", maxWidth: 460, width: "92%", padding: "36px 32px", textAlign: "center", boxShadow: "var(--shadow-pop)" }}>
@@ -195,18 +201,29 @@ function Onboard() {
           {isReturning ? "Xác nhận thông tin" : "Chào mừng tới lớp!"}
         </h2>
         <p style={{ color: "var(--muted)", fontWeight: 500, fontSize: 16, lineHeight: 1.55, margin: "0 0 20px" }}>
-          {isReturning
-            ? "Vui lòng xác nhận hoặc cập nhật email của bạn — dùng để chia sẻ file chữa bài sau khi nộp."
-            : "Cho thầy biết tên và email của bạn — dùng để hiển thị trong bài và chia sẻ file chữa bài."}
+          {lockEmail
+            ? "Cho thầy biết tên hiển thị của bạn. File chữa bài sẽ được chia sẻ tới email Google bạn đã đăng nhập (hiển thị bên dưới)."
+            : (isReturning
+              ? "Vui lòng xác nhận hoặc cập nhật email của bạn — dùng để chia sẻ file chữa bài sau khi nộp."
+              : "Cho thầy biết tên và email của bạn — dùng để hiển thị trong bài và chia sẻ file chữa bài.")}
         </p>
-        <form onSubmit={(e) => { e.preventDefault(); if (canSubmit) setStateH({ name: val.trim(), email: emailVal.trim(), onboarded: true, emailV2: true, emailV3: true }); }}>
+        <form onSubmit={(e) => { e.preventDefault(); if (canSubmit) setStateH({ name: val.trim(), email: lockEmail ? s.authEmail : emailVal.trim(), onboarded: true, emailV2: true, emailV3: true }); }}>
           <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} placeholder="VD: Nguyễn Văn A"
             style={{ width: "100%", padding: "15px 18px", borderRadius: 14, border: "1.5px solid var(--line-strong)", fontSize: 17, fontWeight: 600, textAlign: "center", background: "var(--surface-warm)", outline: "none" }} />
-          <input type="email" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} placeholder="Email của bạn"
-            style={{ width: "100%", padding: "15px 18px", borderRadius: 14, border: "1.5px solid var(--line-strong)", fontSize: 16, fontWeight: 500, textAlign: "center", background: "var(--surface-warm)", outline: "none", marginTop: 12, boxSizing: "border-box" }} />
-          <div style={{ marginTop: 10, padding: "10px 14px", borderRadius: 12, background: "#fbf3df", border: "1px solid #e6c778", fontSize: 13.5, fontWeight: 500, color: "#7a4e00", lineHeight: 1.5, textAlign: "left" }}>
-            ⚠️ Hãy chắc chắn đây là email Google bạn dùng để đăng nhập và sử dụng Google Doc.
-          </div>
+          {lockEmail ? (
+            <div style={{ width: "100%", marginTop: 12, padding: "12px 16px", borderRadius: 14, border: "1.5px solid var(--line-strong)", background: "var(--surface-warm)", textAlign: "center", boxSizing: "border-box" }}>
+              <div style={{ fontSize: 11.5, fontWeight: 800, letterSpacing: ".06em", color: "var(--muted)", textTransform: "uppercase", marginBottom: 3 }}>Email đăng nhập Google</div>
+              <div style={{ fontSize: 15.5, fontWeight: 700, color: "var(--ink)", wordBreak: "break-all" }}>{s.authEmail}</div>
+            </div>
+          ) : (
+            <React.Fragment>
+              <input type="email" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} placeholder="Email của bạn"
+                style={{ width: "100%", padding: "15px 18px", borderRadius: 14, border: "1.5px solid var(--line-strong)", fontSize: 16, fontWeight: 500, textAlign: "center", background: "var(--surface-warm)", outline: "none", marginTop: 12, boxSizing: "border-box" }} />
+              <div style={{ marginTop: 10, padding: "10px 14px", borderRadius: 12, background: "#fbf3df", border: "1px solid #e6c778", fontSize: 13.5, fontWeight: 500, color: "#7a4e00", lineHeight: 1.5, textAlign: "left" }}>
+                ⚠️ Hãy chắc chắn đây là email Google bạn dùng để đăng nhập và sử dụng Google Doc.
+              </div>
+            </React.Fragment>
+          )}
           <button type="submit" disabled={!canSubmit} className="btn btn-ink" style={{ width: "100%", marginTop: 16, fontSize: 17, padding: "15px", opacity: canSubmit ? 1 : .5 }}>
             {isReturning ? "Xác nhận" : "Bắt đầu học"} <IH.arrowR size={19} />
           </button>

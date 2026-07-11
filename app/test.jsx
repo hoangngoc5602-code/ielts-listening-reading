@@ -717,7 +717,9 @@ function SubmitModal({ test, parts, perPart, answers, courseId, weekNum, kind, n
       week: weekNum,
       kind,
       student: name || "",
-      email: st.email || "",
+      // Ưu tiên email Google đã ĐĂNG NHẬP (đã qua allowlist). Chỉ khi cổng tắt
+      // (không có authEmail) mới dùng email HV tự nhập. Tránh lệch email nhận file.
+      email: st.authEmail || st.email || "",
       elapsed,
       answers: buildAnswerPayload(parts, perPart, answers),
     };

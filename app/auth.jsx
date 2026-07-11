@@ -40,6 +40,29 @@ function checkAllowlist(email) {
     });
 }
 
+// Như checkAllowlist nhưng trả về 3 TRẠNG THÁI rõ ràng, dùng cho lần kiểm tra
+// lại nền (kiểu "Mượt"):
+//   "allowed"  = Sheet xác nhận CÒN quyền
+//   "denied"   = Sheet trả rõ KHÔNG còn quyền  → mới đá HV ra
+//   "unknown"  = lỗi mạng / không đọc được KQ  → GIỮ NGUYÊN quyền (không khóa nhầm)
+function recheckAllowlist(email) {
+  const url = AUTH_CONFIG.allowlistUrl + "?email=" + encodeURIComponent(email);
+  return fetch(url, { method: "GET" })
+    .then(function (r) { return r.text(); })
+    .then(function (txt) {
+      let val = null;
+      try { val = JSON.parse(txt).allowed; }
+      catch (e) {
+        if (/"?allowed"?\s*:\s*true/i.test(txt) || /^true$/i.test(txt.trim())) val = true;
+        else if (/"?allowed"?\s*:\s*false/i.test(txt) || /^false$/i.test(txt.trim())) val = false;
+      }
+      if (val === true) return "allowed";
+      if (val === false) return "denied";
+      return "unknown";
+    })
+    .catch(function () { return "unknown"; });
+}
+
 // Nạp thư viện Google Identity Services (một lần).
 function loadGis() {
   return new Promise(function (resolve, reject) {
@@ -78,17 +101,38 @@ function AuthGate({ children }) {
     }).catch(function () { setPhase("checkerror"); });
   }
 
-  // Khởi tạo GIS khi cần đăng nhập.
+  // Kiểm tra LẠI allowlist mỗi lần mở web cho người đã lưu (kiểu "Mượt"):
+  // cho vào ngay, kiểm tra ngầm; nếu Sheet trả rõ "không còn quyền" → đá ra
+  // màn "denied" (HV bị xoá khỏi Sheet sẽ bị chặn ở lần vào kế tiếp).
+  // Lỗi mạng / không đọc được kết quả → giữ nguyên quyền, không khóa nhầm HV thật.
   useEffectAu(function () {
-    if (!authEnabled() || cachedOk) return;
+    if (!authEnabled() || !cachedOk) return;
+    let alive = true;
+    recheckAllowlist(s.authEmail).then(function (status) {
+      if (!alive) return;
+      if (status === "denied") {
+        setStateAu({ authAllowed: false, authEmail: "", authName: "" });
+        try { window.google.accounts.id.disableAutoSelect(); } catch (e) {}
+        setWho(s.authEmail || "");
+        setPhase("denied");
+      }
+    });
+    return function () { alive = false; };
+  }, []);
+
+  // Khởi tạo GIS khi cổng bật. Khởi tạo cho CẢ người đã lưu (cached) để nếu
+  // sau đó họ bị re-check đá ra thì nút "Dùng tài khoản Google khác" vẫn hiện
+  // được. Chỉ chuyển sang màn "signin" khi CHƯA có phiên đã lưu.
+  useEffectAu(function () {
+    if (!authEnabled()) return;
     let alive = true;
     loadGis().then(function () {
       if (!alive) return;
       try {
         window.google.accounts.id.initialize({ client_id: AUTH_CONFIG.clientId, callback: onCredential });
       } catch (e) {}
-      setPhase("signin");
-    }).catch(function () { if (alive) setPhase("gis_error"); });
+      if (!cachedOk) setPhase("signin");
+    }).catch(function () { if (alive && !cachedOk) setPhase("gis_error"); });
     return function () { alive = false; };
   }, []);
 
