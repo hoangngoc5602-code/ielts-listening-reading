@@ -7,17 +7,18 @@ const { Icons: I_, } = window.TID_ICONS;
 const { go: goS, useStore: useStoreSh } = window.TID_STORE;
 
 function LogoMark({ size = 46, flat }) {
-  // "Phúc IELTS" brand mark — a soft squircle badge with a geometric P + gold accent dot
+  // Neutral study mark — soft squircle badge with an open-book glyph + gold accent dot
+  const paper = flat ? "var(--tid-green)" : "#ffffff";
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" style={{ display: "block", flex: "none" }}>
       <rect x="2" y="2" width="44" height="44" rx="15"
         fill={flat ? "#ffffff" : "var(--tid-green)"} />
-      {/* P glyph */}
-      <path d="M16 11h11.5a8.5 8.5 0 0 1 0 17H22v9h-6z"
-        fill={flat ? "var(--tid-green)" : "#ffffff"} />
-      <circle cx="22" cy="19.5" r="3.4" fill={flat ? "#ffffff" : "var(--tid-green)"} />
+      {/* open book */}
+      <path d="M24 16.5C21 14.6 17.4 14.2 14 15.2V32.4c3.4-1 7-.6 10 1.3 3-1.9 6.6-2.3 10-1.3V15.2C30.6 14.2 27 14.6 24 16.5Z"
+        fill={paper} />
+      <path d="M24 16.8V33.7" stroke={flat ? "#ffffff" : "var(--tid-green)"} strokeWidth="1.6" strokeLinecap="round" />
       {/* accent dot */}
-      <circle cx="34.5" cy="34.5" r="3.8" fill="var(--tid-orange)" />
+      <circle cx="35" cy="35" r="3.6" fill="var(--tid-orange)" />
     </svg>
   );
 }
@@ -29,7 +30,7 @@ function Logo({ small, light, flat }) {
     <div className="row" style={{ gap: small ? 9 : 12 }}>
       <LogoMark size={markSize} flat={flat} />
       <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: textSize, color: light ? "#fff" : "var(--ink)", letterSpacing: "-.02em", whiteSpace: "nowrap", lineHeight: 1 }}>
-        Phúc<span style={{ fontWeight: 500, letterSpacing: ".02em", marginLeft: small ? 4 : 6, opacity: .82 }}>IELTS</span>
+        IELTS<span style={{ fontWeight: 500, letterSpacing: ".01em", marginLeft: small ? 5 : 7, opacity: .82 }}>{small ? "R & L" : "Reading & Listening"}</span>
       </span>
     </div>
   );

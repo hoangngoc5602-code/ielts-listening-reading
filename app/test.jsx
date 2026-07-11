@@ -1,5 +1,5 @@
 /* ============================================================
-   Phúc IELTS — Test interface (multi-part, stopwatch, submit→GDoc)
+   IELTS Reading & Listening — Test interface (multi-part, stopwatch, submit→GDoc)
    A test = { id, course, skill, title, parts:[ {part, passage?, audio?,
               instruction?, groups:[...] } ] }
    Answers are namespaced per part:  answers[`${partIdx}:${qNum}`]

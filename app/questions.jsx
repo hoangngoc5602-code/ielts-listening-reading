@@ -1,5 +1,5 @@
 /* ============================================================
-   Phúc IELTS — Question renderers (all real IELTS types)
+   IELTS Reading & Listening — Question renderers (all real IELTS types)
    Two visual themes via `th` (theme object): playful | pro
    Supported kinds:
      matching-info     · match info/headings to paragraphs (A–F)

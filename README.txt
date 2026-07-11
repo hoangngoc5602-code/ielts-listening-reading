@@ -1,9 +1,9 @@
-PHÚC IELTS — Website hoàn chỉnh, độc lập.
+IELTS READING & LISTENING — Website hoàn chỉnh, độc lập.
 
 CÁCH ĐƯA LÊN MẠNG (khuyên dùng Netlify kéo–thả — dễ và nhận file lớn):
 1. Vào https://app.netlify.com → đăng nhập.
 2. Add new site → Deploy manually.
-3. Kéo–thả TOÀN BỘ thư mục "phucielts-site" này vào ô đó.
+3. Kéo–thả TOÀN BỘ thư mục dự án này vào ô đó.
 4. Netlify cho bạn một link web chạy được ngay.
 
 Ghi chú:

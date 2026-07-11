@@ -178,8 +178,10 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   (`materials.recordings[].youtube`). Các video này **vẫn nằm trên kênh YouTube gắn tài khoản
   cũ**. Nếu kênh mất, video hỏng. Muốn độc lập hẳn: tải video về + up lên kênh mới rồi
   đổi ID. (Chưa làm — hỏi chủ nếu muốn xử lý.)
-- **Fallback trong index.html:** vẫn còn dòng fallback về `phucielts.vercel.app` (chỉ chạy khi
-  thiếu `app/data.jsx` local). Vô hại; có thể bỏ nếu muốn tuyệt đối không nhắc tới site cũ.
+- **Màn chờ loading:** `index.html` có overlay `#tid-loader` (hamster chạy bánh xe, CSS thuần) hiện
+  ngay khi mở web; bootstrap gọi `hideLoader()` để ẩn mượt khi app tải xong (hoặc khi lỗi thiếu data).
+- **Fallback site cũ:** ĐÃ GỠ (không còn trỏ tới `phucielts.vercel.app`). Nếu thiếu `app/data.jsx` local
+  thì hiện thẳng thông báo lỗi (hàm `fail()`), không gọi site cũ nữa.
 - **`.DS_Store`:** file rác của macOS, vô hại. Nên để `.gitignore` bỏ qua.
 
 ---
@@ -206,6 +208,9 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ 10 file nghe trong `assets/audio/`, 16 PDF trong `assets/docs/` — tất cả khớp link trong `data.jsx`.
 - ✅ Nộp bài chạy qua Apps Script mới (`docScriptUrl` bản mới, `docSecret=hoangngoc`).
 - ✅ **Giao diện đã đổi sang theme "Calm Academy"** (2026-07-10): xanh pine + sage + vàng gold, bóng mềm, font Plus Jakarta Sans, + chuyển động GSAP (`app/motion.js`). Trang làm bài "Thi Thật" giữ nguyên cho sát IELTS máy. Flow không đổi.
+- ✅ **Đã DE-BRAND toàn bộ "Phúc"** (2026-07-10, chủ đã chốt): web + tên khóa (`IELTS Reading`/`IELTS Listening`) + logo (bỏ chữ P → biểu tượng sách, chữ "IELTS · Reading & Listening") + **cả 16 PDF** (xoá "PHÚC" và ô header "Week N - …", giữ nguyên nội dung). Không còn chữ "Phúc" trong code/PDF. Đã gỡ luôn fallback về `phucielts.vercel.app`.
+- ✅ **Màn chờ loading** (hamster chạy bánh xe) hiện ngay trong `index.html`, tự ẩn khi app tải xong.
+- ⏳ **Google Auth + allowlist (đang làm):** chủ đang tạo OAuth Client ID + Apps Script allowlist. Chưa ráp phần web. (Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện.)
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -228,3 +233,14 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
     "Vui tươi".
   · Đã kiểm tra: toàn bộ file JSX biên dịch sạch; render thử 11 trang/tab/theme bằng jsdom → không lỗi.
   · Sao lưu bản gốc trước khi sửa (thư mục tạm của phiên làm việc).
+- 2026-07-10 — **Màn chờ loading + De-brand toàn bộ "Phúc"** (chủ đã chốt). Không đụng logic/flow:
+  · `index.html`: thêm overlay `#tid-loader` (hamster chạy bánh xe, CSS thuần) hiện ngay + `hideLoader()`
+    ẩn khi app xong; đổi `<title>` thành "IELTS Reading & Listening"; **gỡ fallback** về site cũ.
+  · De-brand chữ: logo (`shell.jsx` — bỏ chữ P → biểu tượng sách, chữ "IELTS · Reading & Listening"),
+    kicker + footer + placeholder (`home.jsx`), tên khóa trong `data.jsx` (`IELTS Reading`/`IELTS Listening`),
+    README + comment đầu các file. Không còn "Phúc" trong code.
+  · **16 PDF trong `assets/docs/`**: xoá chữ "PHÚC" (giữ phần "IELTS READING/LISTENING" gốc) và **che ô header
+    "Week N - …"** bằng PyMuPDF (redact text tách biệt + che trắng dải header — KHÔNG xoá nhầm nội dung).
+    Đã kiểm tra tỷ lệ text 0.97–1.0, số trang không đổi, render ảnh đối chiếu. Bản gốc PDF đã sao lưu.
+  · Google Auth + allowlist: đã giao hướng dẫn thiết lập (OAuth Client ID + Apps Script đọc Google Sheet);
+    chủ đang làm phần Google, sẽ ráp front-end sau (gate tắt mặc định, không phá flow).

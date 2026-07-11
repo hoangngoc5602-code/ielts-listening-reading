@@ -48,7 +48,7 @@ function HomePage() {
           <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1.05fr) minmax(0,1fr)", alignItems: "center", gap: 40 }}>
             <div data-stagger style={{ color: "#fff" }}>
               <span data-stagger-item className="row" style={{ display: "inline-flex", gap: 9, background: "rgba(217,164,65,.14)", color: "#f0cd86", padding: "8px 16px", borderRadius: 999, fontWeight: 700, fontSize: 13, letterSpacing: ".06em", border: "1px solid rgba(217,164,65,.32)", whiteSpace: "nowrap" }}>
-                <IH.sparkle size={15} /> LỚP LUYỆN THI · PHÚC IELTS
+                <IH.sparkle size={15} /> LỚP LUYỆN THI · IELTS READING & LISTENING
               </span>
               <h1 data-stagger-item style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 66, lineHeight: 1.02, margin: "22px 0 0", letterSpacing: "-.03em" }}>
                 Reading <span style={{ color: "var(--tid-orange)" }}>&amp;</span><br/>Listening
@@ -200,7 +200,7 @@ function Onboard() {
             : "Cho thầy biết tên và email của bạn — dùng để hiển thị trong bài và chia sẻ file chữa bài."}
         </p>
         <form onSubmit={(e) => { e.preventDefault(); if (canSubmit) setStateH({ name: val.trim(), email: emailVal.trim(), onboarded: true, emailV2: true, emailV3: true }); }}>
-          <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} placeholder="VD: Hoàng Đăng Phúc"
+          <input autoFocus value={val} onChange={(e) => setVal(e.target.value)} placeholder="VD: Nguyễn Văn A"
             style={{ width: "100%", padding: "15px 18px", borderRadius: 14, border: "1.5px solid var(--line-strong)", fontSize: 17, fontWeight: 600, textAlign: "center", background: "var(--surface-warm)", outline: "none" }} />
           <input type="email" value={emailVal} onChange={(e) => setEmailVal(e.target.value)} placeholder="Email của bạn"
             style={{ width: "100%", padding: "15px 18px", borderRadius: 14, border: "1.5px solid var(--line-strong)", fontSize: 16, fontWeight: 500, textAlign: "center", background: "var(--surface-warm)", outline: "none", marginTop: 12, boxSizing: "border-box" }} />
@@ -285,7 +285,7 @@ function Footer() {
           <LogoH small light />
           <span style={{ fontWeight: 600, fontSize: 15 }}>Lớp Reading &amp; Listening</span>
         </div>
-        <div style={{ fontSize: 14, fontWeight: 500 }}>© 2026 Phúc IELTS</div>
+        <div style={{ fontSize: 14, fontWeight: 500 }}>© 2026 IELTS Reading &amp; Listening</div>
       </div>
     </footer>
   );

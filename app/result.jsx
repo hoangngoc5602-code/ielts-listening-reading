@@ -1,5 +1,5 @@
 /* ============================================================
-   Phúc IELTS — Homework result page (self-check + shareable)
+   IELTS Reading & Listening — Homework result page (self-check + shareable)
    Route: #/r/<payload>  where payload = encodeResult({v,c,w,k,n,e,a,t})
    The link is self-contained: it carries the student's answers; the page
    grades them client-side against the answer key embedded in data.jsx and
