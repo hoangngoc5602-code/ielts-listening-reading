@@ -212,6 +212,7 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ **Đã DE-BRAND toàn bộ "Phúc"** (2026-07-10, chủ đã chốt): web + tên khóa (`IELTS Reading`/`IELTS Listening`) + logo (bỏ chữ P → biểu tượng sách, chữ "IELTS · Reading & Listening") + **cả 16 PDF** (xoá "PHÚC" và ô header "Week N - …", giữ nguyên nội dung). Không còn chữ "Phúc" trong code/PDF. Đã gỡ luôn fallback về `phucielts.vercel.app`.
 - ✅ **Màn chờ loading** (hamster chạy bánh xe) hiện ngay trong `index.html`, tự ẩn khi app tải xong.
 - ✅ **Google Auth + allowlist (đã test thật, chạy ổn định — chủ xác nhận 2026-07-10):** `app/auth.jsx` (`window.TID_AUTH`) — đăng nhập Google (GIS) rồi kiểm tra email qua Apps Script allowlist; bọc `AuthGate` trong `app.jsx` (link `#/r/...` KHÔNG đi qua cổng). Client ID + `allowlistUrl` nằm trong `AUTH_CONFIG` đầu `auth.jsx`. **Tắt cổng:** để `clientId` rỗng. Email Google xác thực được dùng luôn cho nộp bài. Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện. Thêm/bớt học viên = sửa Google Sheet allowlist (không cần deploy lại).
+- ✅ **Kiểm tra lại allowlist mỗi lần mở web + khóa email nộp bài (2026-07-11, chủ đã chốt):** `auth.jsx` giờ hỏi LẠI allowlist mỗi lần tải trang cho người đã lưu phiên (kiểu "Mượt" — chạy ngầm, KHÔNG chặn hiển thị; HV bị xoá khỏi Sheet sẽ bị đá ra ~1s ở lần vào kế tiếp; lỗi mạng/Apps Script thì GIỮ NGUYÊN quyền để không khóa nhầm HV thật). Trước đây chỉ kiểm tra 1 lần rồi cache `authAllowed` trong localStorage → xoá khỏi Sheet vẫn vào được; nay đã khắc phục. Đồng thời **email nộp bài luôn lấy theo email đăng nhập** (`st.authEmail` ưu tiên, `test.jsx`); màn "Đổi tên" (`home.jsx` Onboard) khi cổng BẬT chỉ cho sửa TÊN, email hiển thị **chỉ đọc** → hết cảnh HV gõ email khác làm lệch email nhận Google Doc. Cổng TẮT (`clientId` rỗng) → cả 2 việc tự bỏ qua, web chạy y như cũ, không thêm request nào.
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -253,3 +254,22 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   Tổng kết đợt: theme "Calm Academy" + motion GSAP · màn chờ hamster · de-brand toàn bộ (web + 16 PDF) ·
   Google Auth + allowlist (đã bật, `clientId` có trong `auth.jsx`). Flow gốc (mở tuần, làm bài, nộp qua
   Apps Script, chấm điểm, link chia sẻ kết quả) giữ nguyên, không đổi.
+- 2026-07-11 — **Vá 2 lỗ hổng đăng nhập/nộp bài** (chủ đã test thật OK + chốt). KHÔNG đụng flow khác:
+  · **Vấn đề 1 — HV bị xoá khỏi Sheet vẫn vào được:** nguyên nhân là `auth.jsx` chỉ kiểm tra allowlist
+    1 lần rồi lưu `authAllowed` trong localStorage, lần sau cho vào thẳng không hỏi lại. Sửa: thêm
+    `recheckAllowlist(email)` (3 trạng thái allowed/denied/unknown) + `useEffect` kiểm tra LẠI mỗi lần
+    mở web cho người đã lưu phiên. Kiểu "Mượt": render nội dung ngay, kiểm tra ngầm; chỉ khi Sheet trả
+    rõ `allowed:false` mới đá ra "denied" (xoá cache + `disableAutoSelect`); lỗi mạng/không đọc được KQ →
+    "unknown" → giữ nguyên quyền (fail-open, không khóa nhầm HV thật). Chạy 1 lần/lần-tải-trang, KHÔNG
+    lặp khi chuyển tuần (hash routing không remount `AuthGate`). Đổi effect khởi tạo GIS: nay init cả cho
+    người đã cache (chỉ chuyển màn "signin" khi chưa có phiên) để nút "Dùng tài khoản Google khác" hoạt
+    động sau khi bị đá ra.
+  · **Vấn đề 2 — nộp bài chia sẻ Doc nhầm email:** `st.email` bị cả auth (email đăng nhập) LẪN ô "Đổi tên"
+    (email HV tự gõ) ghi đè → HV đổi email sau khi đăng nhập thì Doc share nhầm. Sửa: `test.jsx` nộp bài
+    ưu tiên `st.authEmail || st.email`; `home.jsx` Onboard khi cổng BẬT + đã có `authEmail` → khóa email
+    (chỉ đọc), chỉ cho sửa tên; submit ghi `email = authEmail`. Cổng TẮT → quay lại cho gõ email như cũ.
+  · Ảnh hưởng: KHÔNG đổi tốc độ hiển thị (các call chạy nền, không chặn paint); link `#/r/...` vẫn đi vòng
+    qua cổng; các trang/flow khác không chạm. Cổng TẮT → không thêm request nào.
+  · Đã kiểm tra: Babel transform (preset react) `auth.jsx`/`home.jsx`/`test.jsx` → sạch. Chủ test local:
+    xoá email khỏi Sheet + refresh → bị đá ra; email ô Đổi tên chỉ đọc; nộp bài share đúng email đăng nhập.
+  · File đụng tới: `app/auth.jsx`, `app/home.jsx`, `app/test.jsx` (store.jsx/app.jsx không đổi).
