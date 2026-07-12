@@ -68,7 +68,8 @@ ielts-listening-reading/            ← gốc repo (index.html PHẢI ở đây)
 │   ├── app.jsx       ← gốc React + định tuyến (render <App/>)
 │   ├── doc-config.js ← ⭐ CẤU HÌNH backend Doc MỚI: dán URL Apps Script + secret → window.TID_DOC_CFG
 │   ├── scripts.js    ← ⭐ TRANSCRIPT nghe đủ 8 tuần (thu hồi từ site cũ) → window.TID_SCRIPTS
-│   └── docbuild.js   ← ⭐ dựng "model" nội dung Doc bài làm (mọi dạng câu hỏi) → window.TID_DOCBUILD
+│   ├── docbuild.js   ← ⭐ dựng "model" nội dung Doc bài làm (mọi dạng câu hỏi) → window.TID_DOCBUILD
+│   └── images/       ← ⭐ 3 hình câu hỏi (sơ đồ/bản đồ): w8-p1-diagram.png, Listening-W6-p2-map.png, listening-w8-p2-map.png
 ├── apps-script/
 │   ├── Code.gs        ← ⭐ backend Apps Script MỚI: nhận model → vẽ Google Doc (bảng 2 cột) + chia sẻ
 │   └── HUONG-DAN.md   ← hướng dẫn deploy Apps Script từng bước
@@ -152,8 +153,15 @@ nằm trong data.jsx** — nó nằm trong hằng **`SYLLABUS`** ở đầu file
 - URL backend mới (`TID_DOC_CFG.url`):
   `https://script.google.com/macros/s/AKfycby26mBzfltkVVA5D68GNH_MA0Sn4vREl_rsp_YKCl-7ID9BBfauWjdwIOZsWDfW5XBBag/exec`
   · `secret = "hoangngoc"` (khớp `SECRET` trong Code.gs) · chạy trên `hoangngoc5602@gmail.com`.
-- **Cột trái**: Reading = đoạn văn (từ data.jsx); Listening = **transcript** (từ `app/scripts.js`,
-  có tag `(Qn)` = vị trí đáp án đúng). **Cột phải**: câu hỏi + đáp án HV chèn tại chỗ (xanh đậm).
+- **Cột trái**: Reading = đoạn văn (từ data.jsx); Listening = **transcript** (từ `app/scripts.js`).
+  Trong transcript: câu/cụm chứa đáp án đúng được **tô nền cam `#FF9900`** (đánh dấu `«…»` trong
+  scripts.js), tag `(Qn)` để chữ xanh. **Cột phải**: câu hỏi + đáp án HV chèn tại chỗ (**xanh đậm `#0000FF`**).
+- **Nghe (audio)**: mỗi part Listening có dòng "🎧 Audio: <nhãn>" là **link bấm được** tới file mp3
+  (docbuild ghép `location.origin` vào đường dẫn tương đối trong data.jsx → link tuyệt đối).
+- **Nhiều part**: mỗi part **sang trang mới** + tiêu đề "Part N" kiểu **Heading 1** (hiện ở Mục lục/Outline
+  để điều hướng như tab). Lưu ý: Google KHÔNG cho tạo Doc "tab" thật bằng code (cả Apps Script lẫn Docs API);
+  đây là giải pháp thay thế đáng tin cậy.
+- **Bảng rộng gần hết khổ giấy** (cột ~272pt, lề 28pt) + giãn dòng 1.3, giãn đoạn (transcript giãn thêm).
 - **TẮT backend mới** = để `url: ""` trong `doc-config.js` → tự quay về backend cũ (dưới).
 - Chi tiết cài đặt/deploy: xem **`apps-script/HUONG-DAN.md`**.
 
@@ -237,6 +245,12 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   (`window.TID_DOC_CFG.url`); để trống url → tự quay về backend cũ. `test.jsx` có lưới an toàn
   (dựng model lỗi → dùng backend cũ). Cài đặt: `apps-script/HUONG-DAN.md`. (Đã vá lỗi loang màu/đậm:
   mỗi run set định dạng RÕ RÀNG, kể cả tắt.)
+- ✅ **Nâng cấp Doc đợt 2 (2026-07-12, chủ đã test thật + chốt):** (a) transcript Listening **tô nền cam**
+  câu/cụm chứa đáp án đúng (thu hồi lại đủ 8 tuần, đánh dấu `«…»`); (b) **link audio** bấm được ở mỗi part
+  Listening; (c) **nhiều part → mỗi part sang trang mới + tiêu đề "Part N" (Heading, hiện ở Outline)** — vì
+  Google không cho tạo Doc-tab thật bằng code; (d) **bảng rộng hơn + giãn dòng/đoạn** cho dễ đọc; (e) khôi phục
+  **3 ảnh** câu hỏi bị thiếu vào `app/images/` (trước 404 nên không hiện trên web). Vá thêm: đáp án HV bị mất
+  màu xanh do gọi `setLinkUrl(null)` SAU khi set màu → nay set link TRƯỚC rồi mới set màu.
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -321,3 +335,18 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
     matching/MC) bằng Node; mô phỏng Apps Script (mock) ra đúng cấu trúc; **và gửi model thật vào backend
     mới trên site → Doc hiển thị đúng, chủ xác nhận OK.**
   · **An toàn:** để `url: ""` trong `doc-config.js` → web chạy y như cũ (backend cũ vẫn còn làm lưới an toàn).
+- 2026-07-12 (đợt 2) — **Tinh chỉnh Doc + khôi phục ảnh** (chủ đã test thật + chốt). 4 việc:
+  · **Highlight transcript:** thu hồi LẠI transcript 8 tuần từ Doc site cũ, lần này bắt cả span có **nền cam**
+    (`#FF9900`) → bọc `«…»` trong `app/scripts.js`. `docbuild.js` (`hlTagRuns`) render `«…»` = tô nền cam,
+    `(Qn)` = chữ xanh. (Gap-fill: tô từ đáp án; MC/matching: tô cả câu chứa đáp án — giống site cũ.)
+  · **Link audio:** `docbuild.js` thêm dòng "🎧 Audio: <nhãn>" là link tới `p.audio.url`; đường dẫn tương đối
+    được ghép `location.origin` → link tuyệt đối bấm được. `Code.gs` render link qua `setLinkUrl`.
+  · **Nhiều part → sang trang + Heading:** `Code.gs` chèn `appendPageBreak()` giữa các part + nhãn "Part N"
+    đặt `HEADING1` (hiện ở Outline). (Đã xác minh: Google KHÔNG có API tạo Doc-tab thật → dùng cách này.)
+  · **Rộng + giãn:** cột 272pt, lề 28pt, line-spacing 1.3, spacing-after 6 (transcript 10 qua `b.sp`).
+  · **3 ảnh câu hỏi bị thiếu** (`app/images/w8-p1-diagram.png`, `Listening-W6-p2-map.png`,
+    `listening-w8-p2-map.png`): data.jsx trỏ tới nhưng file chưa có trong repo → 404. Tải bản gốc từ site cũ,
+    nén JPEG (giữ tên .png, trình duyệt vẫn hiện), thêm vào `app/images/`.
+  · **Sửa lỗi mất màu xanh:** trong `Code.gs`, `setLinkUrl(null)` gọi SAU set màu làm reset màu về đen →
+    đổi thứ tự: set link TRƯỚC, rồi mới set màu/nền. File đụng: `app/scripts.js`, `app/docbuild.js`,
+    `apps-script/Code.gs`, thêm thư mục `app/images/`.
