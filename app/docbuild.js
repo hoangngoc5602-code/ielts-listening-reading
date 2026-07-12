@@ -24,7 +24,7 @@
 
   function run(t, o) { var r = { t: t == null ? "" : String(t) }; if (o) { if (o.b) r.b = 1; if (o.i) r.i = 1; if (o.c) r.c = o.c; if (o.bg) r.bg = o.bg; if (o.link) r.link = o.link; } return r; }
   function ans(t) { return { t: (t == null ? "" : String(t)), b: 1, c: BLUE }; }      // đáp án HV: xanh đậm
-  function para(runs, o) { var b = { r: runs && runs.length ? runs : [run("")] }; if (o) { if (o.a) b.a = o.a; if (o.ind) b.ind = o.ind; } return b; }
+  function para(runs, o) { var b = { r: runs && runs.length ? runs : [run("")] }; if (o) { if (o.a) b.a = o.a; if (o.ind) b.ind = o.ind; if (o.sp != null) b.sp = o.sp; } return b; }
   function bullet(runs, ind) { var b = { r: runs && runs.length ? runs : [run("")], bul: 1 }; if (ind) b.ind = ind; return b; }
 
   function fmtVal(v) {
@@ -256,8 +256,8 @@
     var out = [];
     String(text).split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (p, idx) {
       var m = p.match(/^(.+?\|\s*\d{1,2}:\d{2})\s([\s\S]*)$/);
-      if (m) out.push(para([run(m[1] + " ", { b: 1 })].concat(hlTagRuns(m[2]))));
-      else out.push(para(hlTagRuns(p, idx === 0 ? { b: 1 } : undefined)));
+      if (m) out.push(para([run(m[1] + " ", { b: 1 })].concat(hlTagRuns(m[2])), { sp: 10 }));
+      else out.push(para(hlTagRuns(p, idx === 0 ? { b: 1 } : undefined), { sp: 10 }));
     });
     return out.length ? out : [para([run("")])];
   }

@@ -89,19 +89,21 @@ function renderBlock(container, b) {
     var start = pos, end = pos + s.length - 1;
     // Đặt RÕ RÀNG cho từng run (kể cả tắt) — nếu không, Docs để chữ mới "thừa kế"
     // định dạng của run trước → màu/đậm bị loang sang phần sau.
+    // ⚠️ setLinkUrl phải gọi TRƯỚC set màu. Nếu gọi SAU, việc xoá link (null) sẽ
+    // reset màu chữ về đen → mất màu xanh của đáp án HV.
+    t.setLinkUrl(start, end, run.link ? run.link : null);
     t.setBold(start, end, !!run.b);
     t.setItalic(start, end, !!run.i);
     t.setForegroundColor(start, end, run.c || "#000000");
     t.setBackgroundColor(start, end, run.bg ? run.bg : null);   // null = xoá nền (chống loang)
-    t.setLinkUrl(start, end, run.link ? run.link : null);
     pos += s.length;
   });
   if (b.a) {
     var A = DocumentApp.HorizontalAlignment;
     el.setAlignment(b.a === "c" ? A.CENTER : b.a === "j" ? A.JUSTIFY : A.LEFT);
   }
-  // Khoảng cách dòng/đoạn cho dễ đọc
-  try { el.setLineSpacing(1.25); el.setSpacingAfter(4); } catch (e) {}
+  // Khoảng cách dòng/đoạn cho dễ đọc; transcript giãn rộng hơn qua b.sp.
+  try { el.setLineSpacing(1.3); el.setSpacingAfter(b.sp != null ? b.sp : 6); } catch (e) {}
   return el;
 }
 
