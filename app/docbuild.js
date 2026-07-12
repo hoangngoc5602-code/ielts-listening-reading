@@ -19,8 +19,10 @@
    ============================================================ */
 (function () {
   var BLUE = "#0000FF";
+  var ORANGE = "#FF9900";   // nền tô đáp án trong transcript (giống site cũ)
+  var LINK = "#1155CC";
 
-  function run(t, o) { var r = { t: t == null ? "" : String(t) }; if (o) { if (o.b) r.b = 1; if (o.i) r.i = 1; if (o.c) r.c = o.c; } return r; }
+  function run(t, o) { var r = { t: t == null ? "" : String(t) }; if (o) { if (o.b) r.b = 1; if (o.i) r.i = 1; if (o.c) r.c = o.c; if (o.bg) r.bg = o.bg; if (o.link) r.link = o.link; } return r; }
   function ans(t) { return { t: (t == null ? "" : String(t)), b: 1, c: BLUE }; }      // đáp án HV: xanh đậm
   function para(runs, o) { var b = { r: runs && runs.length ? runs : [run("")] }; if (o) { if (o.a) b.a = o.a; if (o.ind) b.ind = o.ind; } return b; }
   function bullet(runs, ind) { var b = { r: runs && runs.length ? runs : [run("")], bul: 1 }; if (ind) b.ind = ind; return b; }
@@ -54,13 +56,21 @@
     return out;
   }
 
-  // (Qn) trong transcript → xanh (không đậm), phần còn lại dùng base
-  function qTagRuns(text, base) {
+  // Transcript: «...» = tô nền cam (câu/cụm chứa đáp án); (Qn) = chữ xanh.
+  function hlTagRuns(text, base) {
     var out = [];
-    String(text).split(/(\(Q\d+\))/).forEach(function (seg) {
+    String(text).split(/(«[^»]*»)/).forEach(function (seg) {
       if (!seg) return;
-      if (/^\(Q\d+\)$/.test(seg)) out.push(run(seg, { c: BLUE }));
-      else out.push(run(seg, base));
+      var hl = /^«[^»]*»$/.test(seg);
+      var inner = hl ? seg.slice(1, -1) : seg;
+      inner.split(/(\(Q\d+\))/).forEach(function (s) {
+        if (!s) return;
+        var o = {};
+        if (base && base.b) o.b = 1;
+        if (hl) o.bg = ORANGE;
+        if (/^\(Q\d+\)$/.test(s)) o.c = BLUE;
+        out.push(run(s, o));
+      });
     });
     return out.length ? out : [run(String(text), base)];
   }
@@ -246,8 +256,8 @@
     var out = [];
     String(text).split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (p, idx) {
       var m = p.match(/^(.+?\|\s*\d{1,2}:\d{2})\s([\s\S]*)$/);
-      if (m) out.push(para([run(m[1] + " ", { b: 1 })].concat(qTagRuns(m[2]))));
-      else out.push(para(qTagRuns(p, idx === 0 ? { b: 1 } : undefined)));
+      if (m) out.push(para([run(m[1] + " ", { b: 1 })].concat(hlTagRuns(m[2]))));
+      else out.push(para(hlTagRuns(p, idx === 0 ? { b: 1 } : undefined)));
     });
     return out.length ? out : [para([run("")])];
   }
@@ -277,7 +287,16 @@
       else left = [para([run("(Chưa có transcript cho phần này)", { i: 1 })])];
 
       var right = [];
-      if (p.audio && p.audio.label) right.push(para([run("🔊 Audio: " + p.audio.label, { b: 1 })]));
+      if (p.audio && (p.audio.label || p.audio.url)) {
+        var alabel = p.audio.label || "Nghe audio";
+        var aurl = p.audio.url || "";
+        // Link phải TUYỆT ĐỐI để bấm mở được trong Google Doc. data.jsx dùng đường
+        // dẫn tương đối ("assets/audio/…") → ghép origin của web hiện tại vào.
+        if (aurl && !/^https?:\/\//i.test(aurl) && typeof location !== "undefined" && location.origin)
+          aurl = location.origin + "/" + aurl.replace(/^\/+/, "");
+        if (aurl) right.push(para([run("🎧 Audio: ", { b: 1 }), run(alabel, { b: 1, c: LINK, link: aurl })]));
+        else right.push(para([run("🎧 Audio: " + alabel, { b: 1 })]));
+      }
       (p.groups || []).forEach(function (g) { right = right.concat(groupBlocks(g, ansMap)); });
 
       return { label: p.part || "", left: left, right: right };

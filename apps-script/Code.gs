@@ -16,7 +16,7 @@
    ============================================================ */
 
 var SECRET = "hoangngoc";
-var COL_WIDTH = 230;          // bề rộng mỗi cột (points)
+var COL_WIDTH = 272;          // bề rộng mỗi cột (points) — rộng gần hết khổ giấy
 var BORDER = "#c9c9c9";
 
 function doPost(e) {
@@ -28,18 +28,22 @@ function doPost(e) {
 
     var doc = DocumentApp.create(String(model.filename).slice(0, 240));
     var body = doc.getBody();
-    body.setMarginTop(36); body.setMarginBottom(36);
-    body.setMarginLeft(36); body.setMarginRight(36);
+    body.setMarginTop(28); body.setMarginBottom(28);
+    body.setMarginLeft(28); body.setMarginRight(28);
 
     // 1) khối trên cùng (dòng thời gian…)
     (model.top || []).forEach(function (b) { renderBlock(body, b); });
 
-    // 2) mỗi part = nhãn + bảng 2 cột
-    (model.parts || []).forEach(function (part) {
+    // 2) mỗi part = (sang trang mới) + nhãn "Part N" (kiểu Heading → hiện ở Mục lục
+    //    để điều hướng như tab) + bảng 2 cột.
+    var multi = (model.parts || []).length > 1;
+    (model.parts || []).forEach(function (part, i) {
+      if (i > 0) body.appendPageBreak();
       if (part.label) {
-        var lp = body.appendParagraph("");
-        lp.editAsText().appendText(String(part.label)).setBold(true);
-        lp.setSpacingBefore(12);
+        var lp = body.appendParagraph(String(part.label));
+        if (multi) { try { lp.setHeading(DocumentApp.ParagraphHeading.HEADING1); } catch (e) {} }
+        lp.editAsText().setBold(true);
+        lp.setSpacingBefore(8); try { lp.setSpacingAfter(6); } catch (e) {}
       }
       var table = body.appendTable();
       var row = table.appendTableRow();
@@ -88,12 +92,16 @@ function renderBlock(container, b) {
     t.setBold(start, end, !!run.b);
     t.setItalic(start, end, !!run.i);
     t.setForegroundColor(start, end, run.c || "#000000");
+    t.setBackgroundColor(start, end, run.bg ? run.bg : null);   // null = xoá nền (chống loang)
+    t.setLinkUrl(start, end, run.link ? run.link : null);
     pos += s.length;
   });
   if (b.a) {
     var A = DocumentApp.HorizontalAlignment;
     el.setAlignment(b.a === "c" ? A.CENTER : b.a === "j" ? A.JUSTIFY : A.LEFT);
   }
+  // Khoảng cách dòng/đoạn cho dễ đọc
+  try { el.setLineSpacing(1.25); el.setSpacingAfter(4); } catch (e) {}
   return el;
 }
 
