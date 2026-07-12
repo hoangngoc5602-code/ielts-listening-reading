@@ -708,25 +708,39 @@ function SubmitModal({ test, parts, perPart, answers, courseId, weekNum, kind, n
   }
 
   function createDoc() {
-    if (!D.docScriptUrl) { setDocError("Chưa cấu hình dịch vụ tạo Google Doc."); return; }
+    // Backend MỚI (Doc đầy đủ đề + đáp án) bật khi app/doc-config.js có url + đã nạp docbuild.
+    // Nếu chưa cấu hình → dùng backend cũ trong data.jsx (web chạy y như trước).
+    const cfg = (typeof window !== "undefined" && window.TID_DOC_CFG) || {};
+    const useNew = !!(cfg.url && window.TID_DOCBUILD && window.TID_DOCBUILD.buildModel);
+    if (!useNew && !D.docScriptUrl) { setDocError("Chưa cấu hình dịch vụ tạo Google Doc."); return; }
     setSending(true); setDocError(""); setDocUrl("");
     const st = JSON.parse(localStorage.getItem("tid_rl_v1") || "{}");
-    const payload = {
-      secret: D.docSecret,
-      course: courseId,
-      week: weekNum,
-      kind,
-      student: name || "",
-      // Ưu tiên email Google đã ĐĂNG NHẬP (đã qua allowlist). Chỉ khi cổng tắt
-      // (không có authEmail) mới dùng email HV tự nhập. Tránh lệch email nhận file.
-      email: st.authEmail || st.email || "",
-      elapsed,
-      answers: buildAnswerPayload(parts, perPart, answers),
-    };
-    fetch(D.docScriptUrl, {
+    // Ưu tiên email Google đã ĐĂNG NHẬP (đã qua allowlist). Chỉ khi cổng tắt
+    // (không có authEmail) mới dùng email HV tự nhập. Tránh lệch email nhận file.
+    const email = st.authEmail || st.email || "";
+    const answersByPart = buildAnswerPayload(parts, perPart, answers);
+    const legacyBody = JSON.stringify({
+      secret: D.docSecret, course: courseId, week: weekNum, kind,
+      student: name || "", email, elapsed, answers: answersByPart,
+    });
+    let url = D.docScriptUrl, body = legacyBody;
+    if (useNew) {
+      try {
+        const model = window.TID_DOCBUILD.buildModel({
+          course: courseId, weekNum, kind, test,
+          student: name || "", elapsed, answersByPart,
+        });
+        url = cfg.url;
+        body = JSON.stringify({ secret: cfg.secret || D.docSecret, email, model });
+      } catch (err) {
+        // Dựng model lỗi → quay về backend cũ để không kẹt bài nộp.
+        url = D.docScriptUrl; body = legacyBody;
+      }
+    }
+    fetch(url, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload),
+      body,
       redirect: "follow",
     })
       .then((r) => r.json())

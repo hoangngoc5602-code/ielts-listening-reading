@@ -103,6 +103,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
+  <!-- Backend tạo Google Doc bài làm (BẢN MỚI, plain JS): cấu hình URL + transcript
+       Listening + bộ dựng "model" cho Doc. Chỉ định nghĩa hàm/biến toàn cục; khi
+       app/doc-config.js còn url="" thì web chạy y như cũ. -->
+  <script src="app/doc-config.js"></script>
+  <script src="app/scripts.js"></script>
+  <script src="app/docbuild.js"></script>
+
   <!-- ============================================================
        Bootstrap loader.
        1) Loads the lesson content: app/data.jsx (LOCAL) first. If that file
