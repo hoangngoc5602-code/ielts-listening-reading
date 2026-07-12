@@ -63,9 +63,15 @@ ielts-listening-reading/            ← gốc repo (index.html PHẢI ở đây)
 │   ├── home.jsx      ← trang chủ + màn hình nhập tên/email (onboarding) → window.TID_HOME
 │   ├── course.jsx    ← danh sách tuần của một khóa → window.TID_COURSE
 │   ├── week.jsx      ← trang 1 tuần (3 tab) + NỘI DUNG "Materials"/quiz (hằng SYLLABUS) → window.TID_WEEK
-│   ├── test.jsx      ← giao diện làm bài + nộp bài (gọi Apps Script) → window.TID_TEST
+│   ├── test.jsx      ← giao diện làm bài + nộp bài (dựng "model" Doc → gọi Apps Script) → window.TID_TEST
 │   ├── result.jsx    ← trang kết quả/chữa bài (self-check) → window.TID_RESULT
-│   └── app.jsx       ← gốc React + định tuyến (render <App/>)
+│   ├── app.jsx       ← gốc React + định tuyến (render <App/>)
+│   ├── doc-config.js ← ⭐ CẤU HÌNH backend Doc MỚI: dán URL Apps Script + secret → window.TID_DOC_CFG
+│   ├── scripts.js    ← ⭐ TRANSCRIPT nghe đủ 8 tuần (thu hồi từ site cũ) → window.TID_SCRIPTS
+│   └── docbuild.js   ← ⭐ dựng "model" nội dung Doc bài làm (mọi dạng câu hỏi) → window.TID_DOCBUILD
+├── apps-script/
+│   ├── Code.gs        ← ⭐ backend Apps Script MỚI: nhận model → vẽ Google Doc (bảng 2 cột) + chia sẻ
+│   └── HUONG-DAN.md   ← hướng dẫn deploy Apps Script từng bước
 └── assets/
     ├── audio/        ← 10 file nghe (Listening). Tên PHẢI khớp link trong data.jsx.
     └── docs/         ← 16 file PDF tài liệu (reading-week-1..8.pdf, listening-week-1..8.pdf)
@@ -137,20 +143,30 @@ nằm trong data.jsx** — nó nằm trong hằng **`SYLLABUS`** ở đầu file
 
 ## 7. Chức năng "Nộp bài" (Google Apps Script)
 
-- Khi học viên bấm Nộp: `app/test.jsx` gửi (POST) đáp án tới **`docScriptUrl`** kèm `docSecret`.
-  Apps Script **tạo một Google Doc mới** chứa đáp án, chia sẻ, và trả link về.
-- URL hiện tại (`docScriptUrl` trong data.jsx):
-  `https://script.google.com/macros/s/AKfycbyvVheH4SlANE4_oY4pDzrSr70H2j9MeHPRr9ZJWcwR158ZrGe_k6ksejD5PsWSjh0Eyg/exec`
-- `docSecret = "hoangngoc"` — **phải khớp** biến `SECRET` trong code Apps Script.
-- Bản Apps Script hiện dùng là **bản 2**: dùng `DocumentApp.create()` (không copy template).
-- Tài khoản Google chạy Apps Script: `hoangngoc5602@gmail.com`.
+**BACKEND MỚI (đang dùng, từ 2026-07-12): Doc tái hiện đầy đủ đề + đáp án HV.**
+- Khi học viên bấm Nộp: `app/test.jsx` gọi `window.TID_DOCBUILD.buildModel(...)` để dựng
+  một "model" (JSON: bảng 2 cột đề|câu hỏi, đáp án HV là run xanh đậm `#0000FF`), rồi POST
+  `{secret, email, model}` tới URL trong **`app/doc-config.js`** (`window.TID_DOC_CFG.url`).
+- Apps Script mới (`apps-script/Code.gs`) **chỉ render model → Google Doc** (bảng 2 cột, borders),
+  chia sẻ cho email HV, trả link. Script KHÔNG chứa nội dung đề (mọi thứ nằm trong model).
+- URL backend mới (`TID_DOC_CFG.url`):
+  `https://script.google.com/macros/s/AKfycby26mBzfltkVVA5D68GNH_MA0Sn4vREl_rsp_YKCl-7ID9BBfauWjdwIOZsWDfW5XBBag/exec`
+  · `secret = "hoangngoc"` (khớp `SECRET` trong Code.gs) · chạy trên `hoangngoc5602@gmail.com`.
+- **Cột trái**: Reading = đoạn văn (từ data.jsx); Listening = **transcript** (từ `app/scripts.js`,
+  có tag `(Qn)` = vị trí đáp án đúng). **Cột phải**: câu hỏi + đáp án HV chèn tại chỗ (xanh đậm).
+- **TẮT backend mới** = để `url: ""` trong `doc-config.js` → tự quay về backend cũ (dưới).
+- Chi tiết cài đặt/deploy: xem **`apps-script/HUONG-DAN.md`**.
+
+**BACKEND CŨ (lưới an toàn, chỉ ghi đáp án thô):** vẫn còn trong `data.jsx`:
+- `docScriptUrl` = `https://script.google.com/macros/s/AKfycbyvVheH4SlANE4_oY4pDzrSr70H2j9MeHPRr9ZJWcwR158ZrGe_k6ksejD5PsWSjh0Eyg/exec`,
+  `docSecret="hoangngoc"` (bản `DocumentApp.create()`). `test.jsx` tự dùng backend cũ nếu
+  `doc-config.js` chưa có url, hoặc nếu dựng model lỗi.
 
 **Nếu cần đổi/deploy lại Apps Script (lưu ý quan trọng, từng bị lỗi):**
-- Sau khi sửa code hoặc quyền, **PHẢI tạo "New deployment"** (bản deploy mới) — bản cũ bị
-  "đóng băng" mức quyền cũ, dẫn tới lỗi *"Truy cập bị từ chối: DriveApp"*.
-- Thiết lập: **Execute as = Me**, **Who has access = Anyone**.
-- Deploy mới → **URL đổi** → phải cập nhật lại `docScriptUrl` trong `data.jsx`.
-- Cấp quyền: chạy hàm `setup` một lần → Allow (Drive + Docs).
+- Sửa code xong: **Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy**
+  (giữ NGUYÊN URL vì quyền không đổi). Chỉ khi ĐỔI quyền/scope mới cần **New deployment**
+  (URL đổi → cập nhật lại `doc-config.js`), nếu không sẽ dính lỗi *"Truy cập bị từ chối: DriveApp"*.
+- Thiết lập: **Execute as = Me**, **Who has access = Anyone**. Cấp quyền: chạy hàm `setup` 1 lần.
 
 ---
 
@@ -213,6 +229,14 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
 - ✅ **Màn chờ loading** (hamster chạy bánh xe) hiện ngay trong `index.html`, tự ẩn khi app tải xong.
 - ✅ **Google Auth + allowlist (đã test thật, chạy ổn định — chủ xác nhận 2026-07-10):** `app/auth.jsx` (`window.TID_AUTH`) — đăng nhập Google (GIS) rồi kiểm tra email qua Apps Script allowlist; bọc `AuthGate` trong `app.jsx` (link `#/r/...` KHÔNG đi qua cổng). Client ID + `allowlistUrl` nằm trong `AUTH_CONFIG` đầu `auth.jsx`. **Tắt cổng:** để `clientId` rỗng. Email Google xác thực được dùng luôn cho nộp bài. Nhắc: file tĩnh vẫn công khai → cổng chỉ chặn giao diện. Thêm/bớt học viên = sửa Google Sheet allowlist (không cần deploy lại).
 - ✅ **Kiểm tra lại allowlist mỗi lần mở web + khóa email nộp bài (2026-07-11, chủ đã chốt):** `auth.jsx` giờ hỏi LẠI allowlist mỗi lần tải trang cho người đã lưu phiên (kiểu "Mượt" — chạy ngầm, KHÔNG chặn hiển thị; HV bị xoá khỏi Sheet sẽ bị đá ra ~1s ở lần vào kế tiếp; lỗi mạng/Apps Script thì GIỮ NGUYÊN quyền để không khóa nhầm HV thật). Trước đây chỉ kiểm tra 1 lần rồi cache `authAllowed` trong localStorage → xoá khỏi Sheet vẫn vào được; nay đã khắc phục. Đồng thời **email nộp bài luôn lấy theo email đăng nhập** (`st.authEmail` ưu tiên, `test.jsx`); màn "Đổi tên" (`home.jsx` Onboard) khi cổng BẬT chỉ cho sửa TÊN, email hiển thị **chỉ đọc** → hết cảnh HV gõ email khác làm lệch email nhận Google Doc. Cổng TẮT (`clientId` rỗng) → cả 2 việc tự bỏ qua, web chạy y như cũ, không thêm request nào.
+- ✅ **Doc bài làm tái hiện đầy đủ đề + đáp án HV (2026-07-12, chủ đã test thật + chốt):**
+  backend Apps Script MỚI (`apps-script/Code.gs`, trên `hoangngoc5602`) chỉ nhận "model" do web
+  dựng (`app/docbuild.js`) rồi vẽ Google Doc **bảng 2 cột** — Reading: đoạn văn|câu hỏi; Listening:
+  **transcript** (`app/scripts.js`, đủ 8 tuần, thu hồi từ site cũ, tag `(Qn)` = đáp án đúng)|câu hỏi.
+  Đáp án HV chèn tại chỗ, **xanh đậm `#0000FF`**. URL backend nằm trong `app/doc-config.js`
+  (`window.TID_DOC_CFG.url`); để trống url → tự quay về backend cũ. `test.jsx` có lưới an toàn
+  (dựng model lỗi → dùng backend cũ). Cài đặt: `apps-script/HUONG-DAN.md`. (Đã vá lỗi loang màu/đậm:
+  mỗi run set định dạng RÕ RÀNG, kể cả tắt.)
 - ⏳ Chưa xử lý: 12 video YouTube vẫn ở kênh cũ (mục 9).
 
 ---
@@ -273,3 +297,27 @@ python3 -m http.server 8080     # rồi mở http://localhost:8080
   · Đã kiểm tra: Babel transform (preset react) `auth.jsx`/`home.jsx`/`test.jsx` → sạch. Chủ test local:
     xoá email khỏi Sheet + refresh → bị đá ra; email ô Đổi tên chỉ đọc; nộp bài share đúng email đăng nhập.
   · File đụng tới: `app/auth.jsx`, `app/home.jsx`, `app/test.jsx` (store.jsx/app.jsx không đổi).
+- 2026-07-12 — **Doc bài làm tái hiện đầy đủ đề + đáp án HV** (chủ đã test thật trên backend mới + chốt).
+  Trước đây Doc chỉ liệt kê đáp án thô, bài nào cũng như nhau. Nay mỗi bài ra Doc GIỐNG site cũ:
+  · **Kiến trúc:** trình duyệt dựng "model" (JSON mô tả bảng 2 cột + run có định dạng) rồi POST
+    `{secret,email,model}` sang Apps Script MỚI; Apps Script chỉ render model → Doc (không chứa nội dung đề).
+    Logic phức tạp nằm ở repo (test được), Apps Script nhỏ & ổn định.
+  · **File thêm:** `app/docbuild.js` (`window.TID_DOCBUILD.buildModel` — dựng model cho mọi kind:
+    completion notes/table/flow/sentences, summary-gap, matching-info/heading/ending, short-answer,
+    mc-single/multi, tfng; đáp án HV = run xanh đậm `#0000FF`, cách "N. đáp án"); `app/scripts.js`
+    (`window.TID_SCRIPTS` — transcript Listening đủ 8 tuần, thu hồi từ Doc site cũ, giữ tag `(Qn)`);
+    `app/doc-config.js` (`window.TID_DOC_CFG` = url + secret, CHỖ DUY NHẤT dán URL). `apps-script/Code.gs`
+    + `apps-script/HUONG-DAN.md`.
+  · **File sửa:** `app/test.jsx` (hàm `createDoc`: nếu `doc-config.js` có url + có `TID_DOCBUILD` →
+    dựng model & gửi backend mới; lỗi/không cấu hình → tự lùi về backend cũ `docScriptUrl`). `index.html`
+    nạp thêm 3 file plain-JS trên (thẻ `<script>`, không qua Babel).
+  · **Bố cục Doc:** tên file `Tên HV — Week N Bài tập… — DD-MM-YYYY HHhMM`; dòng "Thời gian làm bài";
+    mỗi part = nhãn + bảng 2 cột (trái: đoạn văn Reading / transcript Listening; phải: câu hỏi + đáp án HV).
+    Quy ước đáp án: gap-fill chèn "N. đáp án" tại chỗ; MC tô đậm phương án chọn; TFNG/matching thêm đáp án
+    trước/sau câu — bám theo mẫu site cũ.
+  · **Đã vá khi test thật:** lỗi màu/đậm "loang" sang chữ sau (Docs cho chữ mới thừa kế định dạng) →
+    sửa `Code.gs` set định dạng RÕ RÀNG cho từng run (kể cả tắt bold/màu).
+  · **Đã kiểm tra:** JSX/JS biên dịch sạch; `docbuild` dựng model đúng trên dữ liệu thật (Reading/Listening/
+    matching/MC) bằng Node; mô phỏng Apps Script (mock) ra đúng cấu trúc; **và gửi model thật vào backend
+    mới trên site → Doc hiển thị đúng, chủ xác nhận OK.**
+  · **An toàn:** để `url: ""` trong `doc-config.js` → web chạy y như cũ (backend cũ vẫn còn làm lưới an toàn).
